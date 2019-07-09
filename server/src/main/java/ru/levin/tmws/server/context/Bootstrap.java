@@ -3,6 +3,7 @@ package ru.levin.tmws.server.context;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.server.api.IServiceLocator;
 import ru.levin.tmws.server.api.endpoint.IEndpoint;
 import ru.levin.tmws.server.api.repository.IProjectRepository;
@@ -12,14 +13,18 @@ import ru.levin.tmws.server.api.repository.IUserRepository;
 import ru.levin.tmws.server.api.service.*;
 import ru.levin.tmws.server.entity.RoleType;
 import ru.levin.tmws.server.entity.User;
+import ru.levin.tmws.server.exception.DbConnectionException;
 import ru.levin.tmws.server.repository.ProjectRepository;
 import ru.levin.tmws.server.repository.SessionRepository;
 import ru.levin.tmws.server.repository.TaskRepository;
 import ru.levin.tmws.server.repository.UserRepository;
 import ru.levin.tmws.server.service.*;
+import ru.levin.tmws.server.util.DBUtil;
 
+import javax.validation.constraints.Null;
 import javax.xml.ws.Endpoint;
 import java.lang.reflect.Constructor;
+import java.sql.Connection;
 
 @NoArgsConstructor
 public final class Bootstrap implements IServiceLocator {
@@ -56,7 +61,16 @@ public final class Bootstrap implements IServiceLocator {
     @Getter
     private final IPersistService persistService = new PersistService();
 
+    @Nullable
+    @Getter
+    private Connection dbConnection;
+
     public void init(@NotNull final Class<?>[] endpoints) {
+        try {
+            dbConnection = DBUtil.getConnection();
+        } catch (Exception e) {
+            throw new DbConnectionException();
+        }
         createDefaultUsers();
         publishEndpoints(endpoints);
     }
