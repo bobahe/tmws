@@ -7,6 +7,5 @@ import ru.levin.tmws.entity.User;
 public interface IUserRepository extends IRepository<User> {
 
     @Nullable User findOneByLoginAndPassword(@NotNull final String login, @NotNull final String hash);
-    @Nullable User findById(@Nullable final String id);
 
 }

@@ -3,7 +3,6 @@ package ru.levin.tmws.context;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.IEndpoint;
 import ru.levin.tmws.api.repository.IProjectRepository;
@@ -13,7 +12,6 @@ import ru.levin.tmws.api.repository.IUserRepository;
 import ru.levin.tmws.api.service.*;
 import ru.levin.tmws.entity.RoleType;
 import ru.levin.tmws.entity.User;
-import ru.levin.tmws.exception.DbConnectionException;
 import ru.levin.tmws.repository.ProjectRepository;
 import ru.levin.tmws.repository.SessionRepository;
 import ru.levin.tmws.repository.TaskRepository;
@@ -29,16 +27,20 @@ import java.sql.Connection;
 public final class Bootstrap implements IServiceLocator {
 
     @NotNull
-    private final IProjectRepository projectRepository = new ProjectRepository();
+    @Getter
+    private final Connection dbConnection = DBUtil.getConnection();
 
     @NotNull
-    private final ITaskRepository taskRepository = new TaskRepository();
+    private final IProjectRepository projectRepository = new ProjectRepository(dbConnection);
 
     @NotNull
-    private final IUserRepository userRepository = new UserRepository();
+    private final ITaskRepository taskRepository = new TaskRepository(dbConnection);
 
     @NotNull
-    private final ISessionRepository sessionRepository = new SessionRepository();
+    private final IUserRepository userRepository = new UserRepository(dbConnection);
+
+    @NotNull
+    private final ISessionRepository sessionRepository = new SessionRepository(dbConnection);
 
     @NotNull
     @Getter
@@ -60,16 +62,7 @@ public final class Bootstrap implements IServiceLocator {
     @Getter
     private final IPersistService persistService = new PersistService();
 
-    @Nullable
-    @Getter
-    private Connection dbConnection;
-
     public void init(@NotNull final Class<?>[] endpoints) {
-        try {
-            dbConnection = DBUtil.getConnection();
-        } catch (Exception e) {
-            throw new DbConnectionException();
-        }
         createDefaultUsers();
         publishEndpoints(endpoints);
     }
@@ -89,20 +82,23 @@ public final class Bootstrap implements IServiceLocator {
     }
 
     private void createDefaultUsers() {
-        @NotNull final User admin = new User();
-        admin.setId("38aca227-dc47-459f-bc0b-2134e260135c");
-        admin.setLogin("admin");
-        admin.setPassword("admin");
-        admin.setRoleType(RoleType.ADMIN);
+        if (userService.findById("38aca227-dc47-459f-bc0b-2134e260135c") == null) {
+            @NotNull final User admin = new User();
+            admin.setId("38aca227-dc47-459f-bc0b-2134e260135c");
+            admin.setLogin("admin");
+            admin.setPassword("admin");
+            admin.setRoleType(RoleType.ADMIN);
+            userService.save(admin);
+        }
 
-        @NotNull final User user = new User();
-        user.setId("54d01220-0ecd-4ca2-a300-ff6ffc9b1254");
-        user.setLogin("user");
-        user.setPassword("user");
-        user.setRoleType(RoleType.USER);
-
-        userService.save(admin);
-        userService.save(user);
+        if (userService.findById("54d01220-0ecd-4ca2-a300-ff6ffc9b1254") == null) {
+            @NotNull final User user = new User();
+            user.setId("54d01220-0ecd-4ca2-a300-ff6ffc9b1254");
+            user.setLogin("user");
+            user.setPassword("user");
+            user.setRoleType(RoleType.USER);
+            userService.save(user);
+        }
     }
 
 }

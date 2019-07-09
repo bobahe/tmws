@@ -7,6 +7,7 @@ import ru.levin.tmws.api.service.IUserService;
 import ru.levin.tmws.entity.RoleType;
 import ru.levin.tmws.entity.User;
 import ru.levin.tmws.exception.SaveException;
+import ru.levin.tmws.exception.SelectException;
 import ru.levin.tmws.exception.UpdateException;
 import ru.levin.tmws.util.ServiceUtil;
 
@@ -66,7 +67,7 @@ public final class UserService extends AbstractEntityService<User, IUserReposito
             @NotNull final String hash = ServiceUtil.md5(password);
             return repository.findOneByLoginAndPassword(login, hash);
         } catch (Exception e) {
-            throw new SaveException();
+            throw new SelectException();
         }
     }
 
@@ -100,7 +101,7 @@ public final class UserService extends AbstractEntityService<User, IUserReposito
     @Override
     public @Nullable User findById(final @Nullable String id) {
         if (id == null) return null;
-        return repository.findById(id);
+        return repository.findOne(id);
     }
 
     @Override
@@ -108,7 +109,7 @@ public final class UserService extends AbstractEntityService<User, IUserReposito
         if (role == null || role.isEmpty()) throw new UpdateException();
         if (user == null || user.getId() == null) throw new UpdateException();
         @NotNull final RoleType roleType = RoleType.valueOf(role);
-        @Nullable final User serverUser = repository.findById(user.getId());
+        @Nullable final User serverUser = repository.findOne(user.getId());
         if (serverUser == null) throw new UpdateException();
         serverUser.setRoleType(roleType);
         repository.merge(serverUser);

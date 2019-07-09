@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS `app_project`
     `dateBegin`   DATETIME     DEFAULT NULL,
     `dateEnd`     DATETIME     DEFAULT NULL,
     `userId`      VARCHAR(255) DEFAULT NULL,
+    `status`      VARCHAR(50)  DEFAULT NULL,
     PRIMARY KEY (`id`),
     CONSTRAINT `project_to_user_fk` FOREIGN KEY (`userId`) REFERENCES `app_user` (`id`)
 ) ENGINE InnoDB
@@ -54,6 +55,7 @@ CREATE TABLE IF NOT EXISTS `app_task`
     `dateEnd`     DATETIME     DEFAULT NULL,
     `userId`      VARCHAR(255) DEFAULT NULL,
     `projectId`   VARCHAR(255) DEFAULT NULL,
+    `status`      VARCHAR(50)  DEFAULT NULL,
     PRIMARY KEY (`id`),
     CONSTRAINT `task_to_user_fk` FOREIGN KEY (`userId`) REFERENCES `app_user` (`id`),
     CONSTRAINT `task_to_project_fk` FOREIGN KEY (`projectId`) REFERENCES `app_project` (`id`)

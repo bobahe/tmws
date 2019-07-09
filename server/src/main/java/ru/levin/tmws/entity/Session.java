@@ -19,6 +19,9 @@ public final class Session extends AbstractHasOwnerEntity implements Serializabl
     @Nullable
     private String signature;
 
+    @Nullable
+    private Long timestamp;
+
     @Override
     public @Nullable String getUserId() {
         return userId;

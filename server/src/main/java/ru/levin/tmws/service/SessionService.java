@@ -31,7 +31,7 @@ public final class SessionService extends AbstractEntityService<Session, ISessio
 
     @Override
     public @Nullable Session findById(@Nullable final String id) {
-        return repository.findById(id);
+        return repository.findOne(id);
     }
 
     @Override
@@ -44,10 +44,11 @@ public final class SessionService extends AbstractEntityService<Session, ISessio
     @Nullable
     public Session save(@Nullable final Session entity) {
         if (entity == null) return null;
-        repository.persist(entity);
-        entity.setSignature(ServiceUtil.sign(entity, "123", 5));
-        repository.merge(entity);
-        return entity;
+        @Nullable final Session session = repository.persist(entity);
+        if (session == null) return null;
+        session.setSignature(ServiceUtil.sign(session, "123", 5));
+        repository.merge(session);
+        return session;
     }
 
     @Override

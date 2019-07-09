@@ -22,7 +22,7 @@ public abstract class AbstractEntityService<T extends AbstractEntity, E extends 
 
     @NotNull
     public List<T> getAll() {
-        return new ArrayList<>(repository.findAll().values());
+        return new ArrayList<>(repository.findAll());
     }
 
     @Nullable
