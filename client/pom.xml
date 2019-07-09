@@ -40,7 +40,7 @@
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>../lib/</classpathPrefix>
-                            <mainClass>ru.levin.tmws.client.Application</mainClass>
+                            <mainClass>ru.levin.tmws.Application</mainClass>
                         </manifest>
                         <manifestEntries>
                             <Build-Developer>Developer: ${developer.name}</Build-Developer>
