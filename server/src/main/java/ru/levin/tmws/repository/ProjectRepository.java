@@ -160,6 +160,7 @@ public final class ProjectRepository extends AbstractRepository<Project> impleme
         if (row == null) return null;
         @NotNull final Project project = new Project();
         project.setId(row.getString(FieldConst.ID));
+        project.setUserId(row.getString(FieldConst.USER_ID));
         project.setName(row.getString(FieldConst.NAME));
         project.setDescription(row.getString(FieldConst.DESCRIPTION));
         project.setStartDate(row.getDate(FieldConst.DATE_BEGIN));

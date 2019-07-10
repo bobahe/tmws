@@ -179,6 +179,7 @@ public final class TaskRepository extends AbstractRepository<Task> implements IT
         if (row == null) return null;
         @NotNull final Task task = new Task();
         task.setId(row.getString(FieldConst.ID));
+        task.setUserId(row.getString(FieldConst.USER_ID));
         task.setName(row.getString(FieldConst.NAME));
         task.setDescription(row.getString(FieldConst.DESCRIPTION));
         task.setStartDate(row.getDate(FieldConst.DATE_BEGIN));
