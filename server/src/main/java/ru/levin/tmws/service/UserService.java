@@ -80,6 +80,7 @@ public final class UserService extends AbstractEntityService<User, IUserReposito
         try {
             @NotNull final String hash = ServiceUtil.md5(password);
             user.setPassword(hash);
+            repository.merge(user);
         } catch (Exception e) {
             throw new SaveException();
         }

@@ -7,12 +7,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for changeLoginResponse complex type.
+ * <p>Java class for changeProfileResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="changeLoginResponse"&gt;
+ * &lt;complexType name="changeProfileResponse"&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "changeLoginResponse")
-public class ChangeLoginResponse {
+@XmlType(name = "changeProfileResponse")
+public class ChangeProfileResponse {
 
 
 }

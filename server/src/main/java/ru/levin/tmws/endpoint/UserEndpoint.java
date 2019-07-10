@@ -37,15 +37,13 @@ public class UserEndpoint implements IUserEndpoint {
     }
 
     @Override
-    public void changeLogin(final @Nullable Session session, final @Nullable String login) {
+    public void changeProfile(final @Nullable Session session, final @Nullable User user) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
         if (session.getUserId() == null || session.getUserId().isEmpty()) throw new SessionValidationException();
-        if (login == null || login.isEmpty()) throw new SaveException();
-        @Nullable final User user = serviceLocator.getUserService().findById(session.getUserId());
         if (user == null) throw new SaveException();
-        user.setLogin(login);
-        serviceLocator.getUserService().update(user);
+        @Nullable final User updatedUser =  serviceLocator.getUserService().update(user);
+        if (updatedUser == null) throw new SaveException();
     }
 
     @Override

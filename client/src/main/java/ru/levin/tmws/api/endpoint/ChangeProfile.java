@@ -7,17 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for changeLogin complex type.
+ * <p>Java class for changeProfile complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="changeLogin"&gt;
+ * &lt;complexType name="changeProfile"&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
  *         &lt;element name="ticket" type="{http://endpoint.api.tmws.levin.ru/}session" minOccurs="0"/&gt;
- *         &lt;element name="login" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="user" type="{http://endpoint.api.tmws.levin.ru/}user" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -27,14 +27,14 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "changeLogin", propOrder = {
+@XmlType(name = "changeProfile", propOrder = {
     "ticket",
-    "login"
+    "user"
 })
-public class ChangeLogin {
+public class ChangeProfile {
 
     protected Session ticket;
-    protected String login;
+    protected User user;
 
     /**
      * Gets the value of the ticket property.
@@ -61,27 +61,27 @@ public class ChangeLogin {
     }
 
     /**
-     * Gets the value of the login property.
+     * Gets the value of the user property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link User }
      *     
      */
-    public String getLogin() {
-        return login;
+    public User getUser() {
+        return user;
     }
 
     /**
-     * Sets the value of the login property.
+     * Sets the value of the user property.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link User }
      *     
      */
-    public void setLogin(String value) {
-        this.login = value;
+    public void setUser(User value) {
+        this.user = value;
     }
 
 }

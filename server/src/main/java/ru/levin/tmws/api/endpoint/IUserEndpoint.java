@@ -2,6 +2,7 @@ package ru.levin.tmws.api.endpoint;
 
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.entity.Session;
+import ru.levin.tmws.entity.User;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -17,9 +18,9 @@ public interface IUserEndpoint extends IEndpoint {
     );
 
     @WebMethod
-    void changeLogin(
+    void changeProfile(
             @WebParam(name = "ticket") @Nullable final Session session,
-            @WebParam(name = "login") @Nullable final String login
+            @WebParam(name = "user") @Nullable final User user
     );
 
     @WebMethod

@@ -5,6 +5,7 @@ import ru.levin.tmws.command.persist.*;
 import ru.levin.tmws.command.project.*;
 import ru.levin.tmws.command.system.AboutCommand;
 import ru.levin.tmws.command.system.HelpCommand;
+import ru.levin.tmws.command.system.SessionCloseAllCommand;
 import ru.levin.tmws.command.task.*;
 import ru.levin.tmws.command.user.*;
 import ru.levin.tmws.context.Bootstrap;
@@ -23,7 +24,8 @@ public final class Application {
             UserShowProfileCommand.class, UserEditProfileCommand.class, SerializedSaveCommand.class,
             SerializedLoadCommand.class, JAXBXmlSaveCommand.class, JAXBXmlLoadCommand.class,
             JAXBJsonSaveCommand.class, JAXBJsonLoadCommand.class, FasterXmlSaveCommand.class,
-            FasterXmlLoadCommand.class, FasterJsonSaveCommand.class, FasterJsonLoadCommand.class
+            FasterXmlLoadCommand.class, FasterJsonSaveCommand.class, FasterJsonLoadCommand.class,
+            SessionCloseAllCommand.class
     };
 
     public static void main(String[] args) {
