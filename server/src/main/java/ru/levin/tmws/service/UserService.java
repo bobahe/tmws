@@ -31,6 +31,7 @@ public final class UserService extends AbstractEntityService<User, IUserReposito
         final SqlSession session = sessionFactory.openSession();
         try {
             IUserRepository repository = session.getMapper(repositoryClass);
+            entity.setPassword(ServiceUtil.md5(entity.getPassword()));
             repository.persist(entity);
             session.commit();
         } catch (Exception e) {
@@ -71,7 +72,8 @@ public final class UserService extends AbstractEntityService<User, IUserReposito
         if (password == null || password.isEmpty()) return null;
         try (SqlSession session = sessionFactory.openSession()) {
             IUserRepository repository = session.getMapper(repositoryClass);
-            return repository.findOneByLoginAndPassword(login, password);
+            @NotNull final String hash = ServiceUtil.md5(password);
+            return repository.findOneByLoginAndPassword(login, hash);
         }
     }
 

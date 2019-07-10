@@ -1,14 +1,13 @@
 package ru.levin.tmws.entity;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
+import java.util.UUID;
 
-@NoArgsConstructor
 @Getter
 @Setter
 public final class Session extends AbstractHasOwnerEntity implements Serializable {
@@ -21,6 +20,10 @@ public final class Session extends AbstractHasOwnerEntity implements Serializabl
 
     @Nullable
     private Long timestamp;
+
+    public Session() {
+        this.id = UUID.randomUUID().toString();
+    }
 
     @Override
     public @Nullable String getUserId() {

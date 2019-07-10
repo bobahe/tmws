@@ -1,13 +1,12 @@
 package ru.levin.tmws.entity;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
+import java.util.UUID;
 
-@NoArgsConstructor
 @Getter
 @Setter
 public final class User extends AbstractEntity implements Serializable {
@@ -42,4 +41,7 @@ public final class User extends AbstractEntity implements Serializable {
     @Nullable
     private RoleType roleType;
 
+    public User() {
+        this.id = UUID.randomUUID().toString();
+    }
 }

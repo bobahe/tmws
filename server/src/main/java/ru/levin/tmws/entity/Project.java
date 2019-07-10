@@ -1,7 +1,6 @@
 package ru.levin.tmws.entity;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
@@ -10,8 +9,8 @@ import ru.levin.tmws.api.IContainsDatesAndStatus;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.UUID;
 
-@NoArgsConstructor
 @Getter
 @Setter
 @ToString
@@ -31,6 +30,10 @@ public final class Project extends AbstractHasOwnerEntity implements IContainsDa
 
     @Nullable
     private Status status;
+
+    public Project() {
+        this.id = UUID.randomUUID().toString();
+    }
 
     @Nullable
     public String getDescription() {

@@ -18,7 +18,6 @@ public interface IUserRepository extends IRepository<User> {
 
     @Select("SELECT * FROM `app_user` WHERE `id` = #{id}")
     @Results({
-            @Result(id = true, property = "id", column = "id"),
             @Result(property = "password", column = "passwordHash"),
             @Result(property = "roleType", column = "role")
     })
@@ -26,7 +25,7 @@ public interface IUserRepository extends IRepository<User> {
 
     @Insert("INSERT INTO `app_user` VALUES (#{id}, #{email}, #{firstName}, #{lastName}, #{locked}, #{login}," +
             " #{middleName}, #{password}, #{phone}, #{roleType})")
-    @Nullable User persist(@NotNull final User entity);
+    void persist(@NotNull final User entity);
 
     @Update("UPDATE `app_user` SET `email` = #{email}, `firstName` = #{firstName}, `lastName` = #{lastName}, " +
             "`locked` = #{locked}, `login` = #{login}, `middleName` = #{middleName}, `passwordHash` = #{password}, " +
@@ -39,7 +38,14 @@ public interface IUserRepository extends IRepository<User> {
     @Delete("DELETE FROM `app_user`")
     void removeAll();
 
-    @Select("SELECT * FROM `app_user` WHERE `login` = #{login} AND `passwordHash` = ${hash}")
-    @Nullable User findOneByLoginAndPassword(@NotNull final String login, @NotNull final String hash);
+    @Select("SELECT * FROM `app_user` WHERE `login` = #{login} AND `passwordHash` = #{password}")
+    @Results({
+            @Result(property = "password", column = "passwordHash"),
+            @Result(property = "roleType", column = "role")
+    })
+    @Nullable User findOneByLoginAndPassword(
+            @NotNull @Param("login") final String login,
+            @NotNull @Param("password") final String password
+    );
 
 }

@@ -19,7 +19,7 @@ public interface ISessionRepository extends IRepository<Session> {
     @Nullable Session findOne(@NotNull final String id);
 
     @Insert("INSERT INTO `app_session` VALUES (#{id}, #{signature}, #{timestamp}, #{userId})")
-    @Nullable Session persist(@NotNull final Session entity);
+    void persist(@NotNull final Session entity);
 
     @Update("UPDATE `app_session` SET `signature` = #{signature}, `userId` = #{userId}," +
             " `timestamp` = #{timestamp} WHERE `id` = #{id}")

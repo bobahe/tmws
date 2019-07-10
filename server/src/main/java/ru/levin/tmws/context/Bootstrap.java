@@ -33,7 +33,7 @@ public final class Bootstrap implements IServiceLocator {
     private final IPropertyService propertyService = new PropertyService();
 
     @NotNull
-    private final SqlSessionFactory sessionFactory = getSqlSessionFactory();
+    private SqlSessionFactory sessionFactory = getSqlSessionFactory();
 
     @NotNull
     @Getter
@@ -56,7 +56,6 @@ public final class Bootstrap implements IServiceLocator {
     private final IPersistService persistService = new PersistService();
 
     public void init(@NotNull final Class<?>[] endpoints) {
-        propertyService.init();
         createDefaultUsers();
         publishEndpoints(endpoints);
     }
@@ -76,7 +75,6 @@ public final class Bootstrap implements IServiceLocator {
     }
 
     private void createDefaultUsers() {
-        sessionService.findById("38aca227-dc47-459f-bc0b-2134e260135c");
         if (userService.findById("38aca227-dc47-459f-bc0b-2134e260135c") == null) {
             @NotNull final User admin = new User();
             admin.setId("38aca227-dc47-459f-bc0b-2134e260135c");
@@ -97,6 +95,7 @@ public final class Bootstrap implements IServiceLocator {
     }
 
     private SqlSessionFactory getSqlSessionFactory() {
+        propertyService.init();
         @Nullable final String user = propertyService.getJdbcUsername();
         @Nullable final String password = propertyService.getJdbcPassword();
         @Nullable final String url = propertyService.getJdbcUrl();

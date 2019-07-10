@@ -11,7 +11,7 @@ public interface IRepository<E> {
 
     @Nullable E findOne(@NotNull final String id);
 
-    @Nullable E persist(@NotNull final E entity);
+    void persist(@NotNull final E entity);
 
     void merge(@NotNull final E entity);
 
