@@ -2,7 +2,15 @@ package ru.levin.tmws.context;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.ibatis.datasource.pooled.PooledDataSource;
+import org.apache.ibatis.mapping.Environment;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.apache.ibatis.transaction.TransactionFactory;
+import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.IEndpoint;
 import ru.levin.tmws.api.repository.IProjectRepository;
@@ -17,18 +25,16 @@ import ru.levin.tmws.repository.SessionRepository;
 import ru.levin.tmws.repository.TaskRepository;
 import ru.levin.tmws.repository.UserRepository;
 import ru.levin.tmws.service.*;
-import ru.levin.tmws.util.DBUtil;
 
+import javax.sql.DataSource;
 import javax.xml.ws.Endpoint;
 import java.lang.reflect.Constructor;
-import java.sql.Connection;
 
 @NoArgsConstructor
 public final class Bootstrap implements IServiceLocator {
 
     @NotNull
-    @Getter
-    private final Connection dbConnection = DBUtil.getConnection();
+    private final IPropertyService propertyService = new PropertyService();
 
     @NotNull
     private final IProjectRepository projectRepository = new ProjectRepository(dbConnection);
@@ -63,6 +69,7 @@ public final class Bootstrap implements IServiceLocator {
     private final IPersistService persistService = new PersistService();
 
     public void init(@NotNull final Class<?>[] endpoints) {
+        propertyService.init();
         createDefaultUsers();
         publishEndpoints(endpoints);
     }
@@ -99,6 +106,22 @@ public final class Bootstrap implements IServiceLocator {
             user.setRoleType(RoleType.USER);
             userService.save(user);
         }
+    }
+
+    public SqlSessionFactory getSqlSessionFactory() {
+        @Nullable final String user = propertyService.getJdbcUsername();
+        @Nullable final String password = propertyService.getJdbcPassword();
+        @Nullable final String url = propertyService.getJdbcUrl();
+        @Nullable final String driver = propertyService.getJdbcDriver();
+        final DataSource dataSource = new PooledDataSource(driver, url, user, password);
+        final TransactionFactory transactionFactory = new JdbcTransactionFactory();
+        final Environment environment = new Environment("development", transactionFactory, dataSource);
+        final Configuration configuration = new Configuration(environment);
+        configuration.addMapper(UserRepository.class);
+        configuration.addMapper(ProjectRepository.class);
+        configuration.addMapper(SessionRepository.class);
+        configuration.addMapper(TaskRepository.class);
+        return new SqlSessionFactoryBuilder().build(configuration);
     }
 
 }
