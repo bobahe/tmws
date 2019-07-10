@@ -20,10 +20,6 @@ import ru.levin.tmws.api.repository.IUserRepository;
 import ru.levin.tmws.api.service.*;
 import ru.levin.tmws.entity.RoleType;
 import ru.levin.tmws.entity.User;
-import ru.levin.tmws.repository.ProjectRepository;
-import ru.levin.tmws.repository.SessionRepository;
-import ru.levin.tmws.repository.TaskRepository;
-import ru.levin.tmws.repository.UserRepository;
 import ru.levin.tmws.service.*;
 
 import javax.sql.DataSource;
@@ -37,32 +33,23 @@ public final class Bootstrap implements IServiceLocator {
     private final IPropertyService propertyService = new PropertyService();
 
     @NotNull
-    private final IProjectRepository projectRepository = new ProjectRepository(dbConnection);
-
-    @NotNull
-    private final ITaskRepository taskRepository = new TaskRepository(dbConnection);
-
-    @NotNull
-    private final IUserRepository userRepository = new UserRepository(dbConnection);
-
-    @NotNull
-    private final ISessionRepository sessionRepository = new SessionRepository(dbConnection);
+    private final SqlSessionFactory sessionFactory = getSqlSessionFactory();
 
     @NotNull
     @Getter
-    private final IProjectService projectService = new ProjectService(projectRepository);
+    private final IProjectService projectService = new ProjectService(sessionFactory);
 
     @NotNull
     @Getter
-    private final ITaskService taskService = new TaskService(taskRepository);
+    private final ITaskService taskService = new TaskService(sessionFactory);
 
     @NotNull
     @Getter
-    private final IUserService userService = new UserService(userRepository);
+    private final IUserService userService = new UserService(sessionFactory);
 
     @NotNull
     @Getter
-    private final ISessionService sessionService = new SessionService(sessionRepository);
+    private final ISessionService sessionService = new SessionService(sessionFactory);
 
     @NotNull
     @Getter
@@ -89,6 +76,7 @@ public final class Bootstrap implements IServiceLocator {
     }
 
     private void createDefaultUsers() {
+        sessionService.findById("38aca227-dc47-459f-bc0b-2134e260135c");
         if (userService.findById("38aca227-dc47-459f-bc0b-2134e260135c") == null) {
             @NotNull final User admin = new User();
             admin.setId("38aca227-dc47-459f-bc0b-2134e260135c");
@@ -108,7 +96,7 @@ public final class Bootstrap implements IServiceLocator {
         }
     }
 
-    public SqlSessionFactory getSqlSessionFactory() {
+    private SqlSessionFactory getSqlSessionFactory() {
         @Nullable final String user = propertyService.getJdbcUsername();
         @Nullable final String password = propertyService.getJdbcPassword();
         @Nullable final String url = propertyService.getJdbcUrl();
@@ -117,10 +105,10 @@ public final class Bootstrap implements IServiceLocator {
         final TransactionFactory transactionFactory = new JdbcTransactionFactory();
         final Environment environment = new Environment("development", transactionFactory, dataSource);
         final Configuration configuration = new Configuration(environment);
-        configuration.addMapper(UserRepository.class);
-        configuration.addMapper(ProjectRepository.class);
-        configuration.addMapper(SessionRepository.class);
-        configuration.addMapper(TaskRepository.class);
+        configuration.addMapper(IUserRepository.class);
+        configuration.addMapper(IProjectRepository.class);
+        configuration.addMapper(ISessionRepository.class);
+        configuration.addMapper(ITaskRepository.class);
         return new SqlSessionFactoryBuilder().build(configuration);
     }
 

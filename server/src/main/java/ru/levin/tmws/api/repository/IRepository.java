@@ -8,10 +8,15 @@ import java.util.List;
 public interface IRepository<E> {
 
     @NotNull List<E> findAll();
+
     @Nullable E findOne(@NotNull final String id);
+
     @Nullable E persist(@NotNull final E entity);
+
     void merge(@NotNull final E entity);
+
     void remove(@NotNull final E entity);
+
     void removeAll();
 
 }

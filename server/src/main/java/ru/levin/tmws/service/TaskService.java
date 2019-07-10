@@ -1,5 +1,7 @@
 package ru.levin.tmws.service;
 
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.repository.ITaskRepository;
@@ -11,28 +13,35 @@ import java.util.List;
 
 public final class TaskService extends AbstractEntityService<Task, ITaskRepository> implements ITaskService {
 
-    @NotNull final List<Task> list = new ArrayList<>();
+    @NotNull
+    final List<Task> list = new ArrayList<>();
 
     @NotNull
-    private final ITaskRepository repository;
+    private final SqlSessionFactory sessionFactory;
 
-    public TaskService(@NotNull final ITaskRepository repository) {
-        super(repository);
-        this.repository = repository;
+    public TaskService(@NotNull final SqlSessionFactory sessionFactory) {
+        super(sessionFactory, ITaskRepository.class);
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
     @NotNull
     public List<Task> findAllByUserIdAndProjectId(@Nullable final String userId, @Nullable final String projectId) {
         if (userId == null || projectId == null) return list;
-        return repository.findAllByUserIdProjectId(userId, projectId);
+        try (SqlSession session = sessionFactory.openSession()) {
+            ITaskRepository repository = session.getMapper(repositoryClass);
+            return repository.findAllByUserIdProjectId(userId, projectId);
+        }
     }
 
     @Override
     @NotNull
     public List<Task> findAllByUserId(@Nullable final String userId) {
         if (userId == null) return list;
-        return repository.findAllByUserId(userId);
+        try (SqlSession session = sessionFactory.openSession()) {
+            ITaskRepository repository = session.getMapper(repositoryClass);
+            return repository.findAllByUserId(userId);
+        }
     }
 
     @Override
@@ -40,27 +49,54 @@ public final class TaskService extends AbstractEntityService<Task, ITaskReposito
         if (userId == null || userId.isEmpty()) return;
         if (projectId == null || projectId.isEmpty()) return;
 
-        findAllByUserIdAndProjectId(userId, projectId).forEach(repository::remove);
+        final SqlSession session = sessionFactory.openSession();
+        try {
+            ITaskRepository repository = session.getMapper(repositoryClass);
+            repository.findAllByUserIdProjectId(userId, projectId).forEach(repository::remove);
+            session.commit();
+        } catch (Exception e) {
+            session.rollback();
+            throw e;
+        } finally {
+            session.close();
+        }
     }
 
     @Override
     public void removeByUserId(@Nullable final String userId) {
         if (userId == null) return;
-        repository.findAllByUserId(userId);
+
+        final SqlSession session = sessionFactory.openSession();
+        try {
+            ITaskRepository repository = session.getMapper(repositoryClass);
+            repository.removeByUserId(userId);
+            session.commit();
+        } catch (Exception e) {
+            session.rollback();
+            throw e;
+        } finally {
+            session.close();
+        }
     }
 
     @Override
     @Nullable
     public Task findOneByIndex(@Nullable final String userId, final int index) {
-        if  (userId == null) return null;
+        if (userId == null) return null;
         if (index < 0) return null;
-        return repository.findAllByUserId(userId).get(index - 1);
+        try (SqlSession session = sessionFactory.openSession()) {
+            ITaskRepository repository = session.getMapper(repositoryClass);
+            return repository.findAllByUserId(userId).get(index - 1);
+        }
     }
 
     @Override
     public @NotNull List<Task> findAllByPartOfNameOrDescription(final @Nullable String partOfName) {
         if (partOfName == null) return list;
-        return repository.findAllByPartOfNameOrDescription(partOfName);
+        try (SqlSession session = sessionFactory.openSession()) {
+            ITaskRepository repository = session.getMapper(repositoryClass);
+            return repository.findAllByPartOfNameOrDescription(partOfName);
+        }
     }
 
     @Override
@@ -69,7 +105,17 @@ public final class TaskService extends AbstractEntityService<Task, ITaskReposito
         if (entity == null) return null;
         if (entity.getName() == null || entity.getName().isEmpty()) return null;
 
-        repository.persist(entity);
+        final SqlSession session = sessionFactory.openSession();
+        try {
+            ITaskRepository repository = session.getMapper(repositoryClass);
+            repository.persist(entity);
+            session.commit();
+        } catch (Exception e) {
+            session.rollback();
+            throw e;
+        } finally {
+            session.close();
+        }
         return entity;
     }
 
@@ -80,11 +126,17 @@ public final class TaskService extends AbstractEntityService<Task, ITaskReposito
         if (entity.getId() == null || entity.getId().isEmpty()) return null;
         if (entity.getName() == null || entity.getName().isEmpty()) return null;
 
-        if (repository.findOne(entity.getId()) == null) {
-            throw new IllegalStateException("Can not update task. There is no such task in storage.");
+        final SqlSession session = sessionFactory.openSession();
+        try {
+            ITaskRepository repository = session.getMapper(repositoryClass);
+            repository.merge(entity);
+            session.commit();
+        } catch (Exception e) {
+            session.rollback();
+            throw e;
+        } finally {
+            session.close();
         }
-
-        repository.merge(entity);
         return entity;
     }
 
