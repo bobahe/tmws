@@ -1,6 +1,7 @@
 package ru.levin.tmws.service;
 
 import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionException;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,8 +29,8 @@ public final class TaskService extends AbstractEntityService<Task, ITaskReposito
     @NotNull
     public List<Task> findAllByUserIdAndProjectId(@Nullable final String userId, @Nullable final String projectId) {
         if (userId == null || projectId == null) return list;
-        try (SqlSession session = sessionFactory.openSession()) {
-            ITaskRepository repository = session.getMapper(repositoryClass);
+        try (final SqlSession session = sessionFactory.openSession()) {
+            @NotNull final ITaskRepository repository = session.getMapper(repositoryClass);
             return repository.findAllByUserIdProjectId(userId, projectId);
         }
     }
@@ -38,8 +39,8 @@ public final class TaskService extends AbstractEntityService<Task, ITaskReposito
     @NotNull
     public List<Task> findAllByUserId(@Nullable final String userId) {
         if (userId == null) return list;
-        try (SqlSession session = sessionFactory.openSession()) {
-            ITaskRepository repository = session.getMapper(repositoryClass);
+        try (final SqlSession session = sessionFactory.openSession()) {
+            @NotNull final ITaskRepository repository = session.getMapper(repositoryClass);
             return repository.findAllByUserId(userId);
         }
     }
@@ -49,9 +50,10 @@ public final class TaskService extends AbstractEntityService<Task, ITaskReposito
         if (userId == null || userId.isEmpty()) return;
         if (projectId == null || projectId.isEmpty()) return;
 
-        final SqlSession session = sessionFactory.openSession();
+        @Nullable final SqlSession session = sessionFactory.openSession();
+        if (session == null) throw new SqlSessionException();
         try {
-            ITaskRepository repository = session.getMapper(repositoryClass);
+            @NotNull final ITaskRepository repository = session.getMapper(repositoryClass);
             repository.findAllByUserIdProjectId(userId, projectId).forEach(repository::remove);
             session.commit();
         } catch (Exception e) {
@@ -66,9 +68,10 @@ public final class TaskService extends AbstractEntityService<Task, ITaskReposito
     public void removeByUserId(@Nullable final String userId) {
         if (userId == null) return;
 
-        final SqlSession session = sessionFactory.openSession();
+        @Nullable final SqlSession session = sessionFactory.openSession();
+        if (session == null) throw new SqlSessionException();
         try {
-            ITaskRepository repository = session.getMapper(repositoryClass);
+            @NotNull final ITaskRepository repository = session.getMapper(repositoryClass);
             repository.removeByUserId(userId);
             session.commit();
         } catch (Exception e) {
@@ -84,8 +87,8 @@ public final class TaskService extends AbstractEntityService<Task, ITaskReposito
     public Task findOneByIndex(@Nullable final String userId, final int index) {
         if (userId == null) return null;
         if (index < 0) return null;
-        try (SqlSession session = sessionFactory.openSession()) {
-            ITaskRepository repository = session.getMapper(repositoryClass);
+        try (final SqlSession session = sessionFactory.openSession()) {
+            @NotNull final ITaskRepository repository = session.getMapper(repositoryClass);
             return repository.findAllByUserId(userId).get(index - 1);
         }
     }
@@ -93,8 +96,8 @@ public final class TaskService extends AbstractEntityService<Task, ITaskReposito
     @Override
     public @NotNull List<Task> findAllByPartOfNameOrDescription(final @Nullable String partOfName) {
         if (partOfName == null) return list;
-        try (SqlSession session = sessionFactory.openSession()) {
-            ITaskRepository repository = session.getMapper(repositoryClass);
+        try (final SqlSession session = sessionFactory.openSession()) {
+            @NotNull final ITaskRepository repository = session.getMapper(repositoryClass);
             return repository.findAllByPartOfNameOrDescription(partOfName);
         }
     }
@@ -105,9 +108,10 @@ public final class TaskService extends AbstractEntityService<Task, ITaskReposito
         if (entity == null) return null;
         if (entity.getName() == null || entity.getName().isEmpty()) return null;
 
-        final SqlSession session = sessionFactory.openSession();
+        @Nullable final SqlSession session = sessionFactory.openSession();
+        if (session == null) throw new SqlSessionException();
         try {
-            ITaskRepository repository = session.getMapper(repositoryClass);
+            @NotNull final ITaskRepository repository = session.getMapper(repositoryClass);
             repository.persist(entity);
             session.commit();
         } catch (Exception e) {
@@ -126,9 +130,10 @@ public final class TaskService extends AbstractEntityService<Task, ITaskReposito
         if (entity.getId() == null || entity.getId().isEmpty()) return null;
         if (entity.getName() == null || entity.getName().isEmpty()) return null;
 
-        final SqlSession session = sessionFactory.openSession();
+        @Nullable final SqlSession session = sessionFactory.openSession();
+        if (session == null) throw new SqlSessionException();
         try {
-            ITaskRepository repository = session.getMapper(repositoryClass);
+            @NotNull final ITaskRepository repository = session.getMapper(repositoryClass);
             repository.merge(entity);
             session.commit();
         } catch (Exception e) {

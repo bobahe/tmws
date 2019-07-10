@@ -1,6 +1,7 @@
 package ru.levin.tmws.service;
 
 import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionException;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,9 +25,10 @@ public final class ProjectService extends AbstractEntityService<Project, IProjec
     public Project save(final @Nullable Project entity) {
         if (entity == null) return null;
 
-        final SqlSession session = sessionFactory.openSession();
+        @Nullable final SqlSession session = sessionFactory.openSession();
+        if (session == null) throw new SqlSessionException();
         try {
-            IProjectRepository repository = session.getMapper(repositoryClass);
+            @NotNull final IProjectRepository repository = session.getMapper(repositoryClass);
             repository.persist(entity);
             session.commit();
         } catch (Exception e) {
@@ -44,9 +46,10 @@ public final class ProjectService extends AbstractEntityService<Project, IProjec
     public Project update(final @Nullable Project entity) {
         if (entity == null) return null;
 
-        final SqlSession session = sessionFactory.openSession();
+        @Nullable final SqlSession session = sessionFactory.openSession();
+        if (session == null) throw new SqlSessionException();
         try {
-            IProjectRepository repository = session.getMapper(repositoryClass);
+            @NotNull final IProjectRepository repository = session.getMapper(repositoryClass);
             repository.merge(entity);
             session.commit();
         } catch (Exception e) {
@@ -63,9 +66,10 @@ public final class ProjectService extends AbstractEntityService<Project, IProjec
     public void removeByUserId(@Nullable final String userId) {
         if (userId == null) return;
 
-        final SqlSession session = sessionFactory.openSession();
+        @Nullable final SqlSession session = sessionFactory.openSession();
+        if (session == null) throw new SqlSessionException();
         try {
-            IProjectRepository repository = session.getMapper(repositoryClass);
+            @NotNull final IProjectRepository repository = session.getMapper(repositoryClass);
             repository.removeByUserId(userId);
             session.commit();
         } catch (Exception e) {
@@ -80,8 +84,8 @@ public final class ProjectService extends AbstractEntityService<Project, IProjec
     @Nullable
     public Project findOneByIndex(@Nullable final String userId, int index) throws IndexOutOfBoundsException {
         if (userId == null) return null;
-        try (SqlSession session = sessionFactory.openSession()) {
-            IProjectRepository repository = session.getMapper(repositoryClass);
+        try (final SqlSession session = sessionFactory.openSession()) {
+            @NotNull final IProjectRepository repository = session.getMapper(repositoryClass);
             return repository.findAllByUserId(userId).get(index - 1);
         }
     }
@@ -90,8 +94,8 @@ public final class ProjectService extends AbstractEntityService<Project, IProjec
     @NotNull
     public List<Project> findAllByUserId(@Nullable final String userId) {
         if (userId == null) return list;
-        try (SqlSession session = sessionFactory.openSession()) {
-            IProjectRepository repository = session.getMapper(repositoryClass);
+        try (final SqlSession session = sessionFactory.openSession()) {
+            @NotNull final IProjectRepository repository = session.getMapper(repositoryClass);
             return repository.findAllByUserId(userId);
         }
     }
@@ -99,8 +103,8 @@ public final class ProjectService extends AbstractEntityService<Project, IProjec
     @Override
     public @NotNull List<Project> findAllByPartOfNameOrDescription(final @Nullable String partOfName) {
         if (partOfName == null) return list;
-        try (SqlSession session = sessionFactory.openSession()) {
-            IProjectRepository repository = session.getMapper(repositoryClass);
+        try (final SqlSession session = sessionFactory.openSession()) {
+            @NotNull final IProjectRepository repository = session.getMapper(repositoryClass);
             return repository.findAllByPartOfNameOrDescription(partOfName);
         }
     }

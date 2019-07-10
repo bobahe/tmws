@@ -1,6 +1,7 @@
 package ru.levin.tmws.service;
 
 import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionException;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +28,7 @@ public abstract class AbstractEntityService<T extends AbstractEntity, E extends 
     @NotNull
     public List<T> getAll() {
         try (SqlSession session = sessionFactory.openSession()) {
-            E repository = session.getMapper(repositoryClass);
+            @NotNull final E repository = session.getMapper(repositoryClass);
             return repository.findAll();
         }
     }
@@ -42,9 +43,10 @@ public abstract class AbstractEntityService<T extends AbstractEntity, E extends 
         if (entity == null) return false;
         if (entity.getId() == null || entity.getId().isEmpty()) return false;
 
-        final SqlSession session = sessionFactory.openSession();
+        @Nullable final SqlSession session = sessionFactory.openSession();
+        if (session == null) throw new SqlSessionException();
         try {
-            E repository = session.getMapper(repositoryClass);
+            @NotNull final E repository = session.getMapper(repositoryClass);
             repository.remove(entity);
             session.commit();
         } catch (Exception e) {
@@ -58,9 +60,10 @@ public abstract class AbstractEntityService<T extends AbstractEntity, E extends 
     }
 
     public boolean removeAll() {
-        final SqlSession session = sessionFactory.openSession();
+        @Nullable final SqlSession session = sessionFactory.openSession();
+        if (session == null) throw new SqlSessionException();
         try {
-            E repository = session.getMapper(repositoryClass);
+            @NotNull final E repository = session.getMapper(repositoryClass);
             repository.removeAll();
             session.commit();
         } catch (Exception e) {
@@ -75,8 +78,8 @@ public abstract class AbstractEntityService<T extends AbstractEntity, E extends 
     @Nullable
     public T findOneById(final @Nullable String id) {
         if (id == null) return null;
-        try (SqlSession session = sessionFactory.openSession()) {
-            E repository = session.getMapper(repositoryClass);
+        try (final SqlSession session = sessionFactory.openSession()) {
+            @NotNull final E repository = session.getMapper(repositoryClass);
             return repository.findOne(id);
         }
     }

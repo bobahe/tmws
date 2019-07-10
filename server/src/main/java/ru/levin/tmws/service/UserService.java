@@ -1,6 +1,7 @@
 package ru.levin.tmws.service;
 
 import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionException;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,9 +29,10 @@ public final class UserService extends AbstractEntityService<User, IUserReposito
         if (entity.getLogin() == null || entity.getLogin().isEmpty()) return null;
         if (entity.getPassword() == null || entity.getPassword().isEmpty()) return null;
 
-        final SqlSession session = sessionFactory.openSession();
+        @Nullable final SqlSession session = sessionFactory.openSession();
+        if (session == null) throw new SqlSessionException();
         try {
-            IUserRepository repository = session.getMapper(repositoryClass);
+            @NotNull final IUserRepository repository = session.getMapper(repositoryClass);
             entity.setPassword(ServiceUtil.md5(entity.getPassword()));
             repository.persist(entity);
             session.commit();
@@ -51,9 +53,10 @@ public final class UserService extends AbstractEntityService<User, IUserReposito
         if (entity.getPassword() == null || entity.getPassword().isEmpty()) return null;
         if (entity.getId() == null || entity.getId().isEmpty()) return null;
 
-        final SqlSession session = sessionFactory.openSession();
+        @Nullable final SqlSession session = sessionFactory.openSession();
+        if (session == null) throw new SqlSessionException();
         try {
-            IUserRepository repository = session.getMapper(repositoryClass);
+            @NotNull final IUserRepository repository = session.getMapper(repositoryClass);
             repository.merge(entity);
             session.commit();
         } catch (Exception e) {
@@ -70,8 +73,8 @@ public final class UserService extends AbstractEntityService<User, IUserReposito
     public User getUserByLoginAndPassword(@Nullable final String login, @Nullable final String password) {
         if (login == null || login.isEmpty()) return null;
         if (password == null || password.isEmpty()) return null;
-        try (SqlSession session = sessionFactory.openSession()) {
-            IUserRepository repository = session.getMapper(repositoryClass);
+        try (final SqlSession session = sessionFactory.openSession()) {
+            @NotNull final IUserRepository repository = session.getMapper(repositoryClass);
             @NotNull final String hash = ServiceUtil.md5(password);
             return repository.findOneByLoginAndPassword(login, hash);
         }
@@ -83,11 +86,12 @@ public final class UserService extends AbstractEntityService<User, IUserReposito
         if (password == null || password.isEmpty()) return null;
         if (user == null) return null;
 
-        final SqlSession session = sessionFactory.openSession();
+        @Nullable final SqlSession session = sessionFactory.openSession();
+        if (session == null) throw new SqlSessionException();
         try {
             @NotNull final String hash = ServiceUtil.md5(password);
             user.setPassword(hash);
-            IUserRepository repository = session.getMapper(repositoryClass);
+            @NotNull final IUserRepository repository = session.getMapper(repositoryClass);
             repository.merge(user);
             session.commit();
         } catch (Exception e) {
@@ -102,8 +106,8 @@ public final class UserService extends AbstractEntityService<User, IUserReposito
     @Override
     public @Nullable User findById(final @Nullable String id) {
         if (id == null) return null;
-        try (SqlSession session = sessionFactory.openSession()) {
-            IUserRepository repository = session.getMapper(repositoryClass);
+        try (final SqlSession session = sessionFactory.openSession()) {
+            @NotNull final IUserRepository repository = session.getMapper(repositoryClass);
             return repository.findOne(id);
         }
     }
@@ -115,9 +119,10 @@ public final class UserService extends AbstractEntityService<User, IUserReposito
         @NotNull final RoleType roleType = RoleType.valueOf(role);
         user.setRoleType(roleType);
 
-        final SqlSession session = sessionFactory.openSession();
+        @Nullable final SqlSession session = sessionFactory.openSession();
+        if (session == null) throw new SqlSessionException();
         try {
-            IUserRepository repository = session.getMapper(repositoryClass);
+            @NotNull final IUserRepository repository = session.getMapper(repositoryClass);
             repository.merge(user);
             session.commit();
         } catch (Exception e) {

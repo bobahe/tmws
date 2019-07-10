@@ -1,6 +1,7 @@
 package ru.levin.tmws.service;
 
 import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionException;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,16 +29,17 @@ public final class SessionService extends AbstractEntityService<Session, ISessio
     @NotNull
     public List<Session> findAllByUserId(@Nullable final String userId) {
         if (userId == null) return list;
-        try (SqlSession session = sessionFactory.openSession()) {
-            ISessionRepository repository = session.getMapper(repositoryClass);
+        try (final SqlSession session = sessionFactory.openSession()) {
+            @NotNull final ISessionRepository repository = session.getMapper(repositoryClass);
             return repository.findAllByUserId(userId);
         }
     }
 
     @Override
     public @Nullable Session findById(@Nullable final String id) {
-        try (SqlSession session = sessionFactory.openSession()) {
-            ISessionRepository repository = session.getMapper(repositoryClass);
+        if (id == null) return null;
+        try (final SqlSession session = sessionFactory.openSession()) {
+            @NotNull final ISessionRepository repository = session.getMapper(repositoryClass);
             return repository.findOne(id);
         }
     }
@@ -46,9 +48,10 @@ public final class SessionService extends AbstractEntityService<Session, ISessio
     public void removeByUserId(@Nullable final String userId) {
         if (userId == null) return;
 
-        final SqlSession session = sessionFactory.openSession();
+        @Nullable final SqlSession session = sessionFactory.openSession();
+        if (session == null) throw new SqlSessionException();
         try {
-            ISessionRepository repository = session.getMapper(repositoryClass);
+            @NotNull final ISessionRepository repository = session.getMapper(repositoryClass);
             repository.removeByUserId(userId);
             session.commit();
         } catch (Exception e) {
@@ -64,9 +67,10 @@ public final class SessionService extends AbstractEntityService<Session, ISessio
     public Session save(@Nullable final Session entity) {
         if (entity == null) return null;
         entity.setSignature(ServiceUtil.sign(entity, "123", 5));
-        final SqlSession session = sessionFactory.openSession();
+        @Nullable final SqlSession session = sessionFactory.openSession();
+        if (session == null) throw new SqlSessionException();
         try {
-            ISessionRepository repository = session.getMapper(repositoryClass);
+            @NotNull final ISessionRepository repository = session.getMapper(repositoryClass);
             repository.persist(entity);
             session.commit();
         } catch (Exception e) {
@@ -85,9 +89,10 @@ public final class SessionService extends AbstractEntityService<Session, ISessio
         if (entity == null) return null;
         if (entity.getId() == null || entity.getId().isEmpty()) return null;
 
-        final SqlSession session = sessionFactory.openSession();
+        @Nullable final SqlSession session = sessionFactory.openSession();
+        if (session == null) throw new SqlSessionException();
         try {
-            ISessionRepository repository = session.getMapper(repositoryClass);
+            @NotNull final ISessionRepository repository = session.getMapper(repositoryClass);
             repository.merge(entity);
             session.commit();
         } catch (Exception e) {
