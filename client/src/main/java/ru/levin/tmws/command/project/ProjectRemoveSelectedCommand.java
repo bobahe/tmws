@@ -51,7 +51,7 @@ public class ProjectRemoveSelectedCommand extends AbstractCommand {
         @Nullable final Project selectedProject = serviceLocator.getSelectedProject();
         if (selectedProject == null) throw new NoSelectedTaskException();
         projectEndpoint.removeProject(serviceLocator.getCurrentSession(), selectedProject);
-        serviceLocator.setSelectedTask(null);
+        serviceLocator.setSelectedProject(null);
     }
 
 }

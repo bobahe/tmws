@@ -51,6 +51,7 @@ public final class TaskRemoveAllCommand extends AbstractCommand {
         taskEndpoint.removeTaskAll(serviceLocator.getCurrentSession());
         serviceLocator.setSelectedTask(null);
         terminalService.println(ALL_TASK_REMOVED_MESSAGE);
+        serviceLocator.setSelectedTask(null);
     }
 
 }

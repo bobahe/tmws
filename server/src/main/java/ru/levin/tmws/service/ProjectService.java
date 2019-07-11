@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.service.IProjectService;
 import ru.levin.tmws.entity.Project;
-import ru.levin.tmws.entity.Task;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -72,10 +71,7 @@ public final class ProjectService extends AbstractEntityService<Project> impleme
     public boolean removeAll() {
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
-        @NotNull final List<Task> tasks = entityManager
-                .createQuery("from Task", Task.class).getResultList();
-        tasks.forEach(entityManager::remove);
-        entityManager.createQuery("delete from Project", Project.class);
+        entityManager.createQuery("delete from Project").executeUpdate();
         entityManager.getTransaction().commit();
         return true;
     }
@@ -96,13 +92,7 @@ public final class ProjectService extends AbstractEntityService<Project> impleme
         if (userId == null) return;
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
-        @NotNull final List<Project> projects = entityManager
-                .createQuery("from Project p where p.user.id = '" + userId + "'", Project.class).getResultList();
-        projects.forEach(project ->
-                entityManager
-                        .createQuery("delete from Task t where t.project.id = '" + project.getId() + "'", Task.class)
-        );
-        entityManager.createQuery("delete from Project p where p.user.id = '" + userId + "'", Project.class);
+        entityManager.createQuery("delete from Project p where p.user.id = '" + userId + "'").executeUpdate();
         entityManager.getTransaction().commit();
     }
 

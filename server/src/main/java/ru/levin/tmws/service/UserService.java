@@ -73,7 +73,7 @@ public final class UserService extends AbstractEntityService<User> implements IU
     public boolean removeAll() {
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
-        entityManager.createQuery("delete from User ", User.class);
+        entityManager.createQuery("delete from User ").executeUpdate();
         entityManager.getTransaction().commit();
         return true;
     }

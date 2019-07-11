@@ -14,7 +14,7 @@ import ru.levin.tmws.exception.NoSelectedTaskException;
 public final class TaskJoinCommand extends AbstractCommand {
 
     @NotNull
-    private static final String SELECTED_PROJECT_MESSAGE = "SELECTED TASK: ";
+    private static final String SELECTED_PROJECT_MESSAGE = "SELECTED PROJECT: ";
 
     @NotNull
     private static final String SELECTED_TASK_MESSAGE = "SELECTED TASK: ";

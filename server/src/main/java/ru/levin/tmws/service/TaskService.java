@@ -67,9 +67,8 @@ public final class TaskService extends AbstractEntityService<Task> implements IT
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
         entityManager.createQuery(
-                "delete from Task t where t.user.id = '" + userId + "' and t.project.id = '" + projectId + "'",
-                Task.class
-        );
+                "delete from Task t where t.user.id = '" + userId + "' and t.project.id = '" + projectId + "'"
+        ).executeUpdate();
         entityManager.getTransaction().commit();
     }
 
@@ -79,7 +78,7 @@ public final class TaskService extends AbstractEntityService<Task> implements IT
 
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
-        entityManager.createQuery("delete from Task t where t.user.id = '" + userId + "'", Task.class);
+        entityManager.createQuery("delete from Task t where t.user.id = '" + userId + "'").executeUpdate();
         entityManager.getTransaction().commit();
     }
 
@@ -147,7 +146,7 @@ public final class TaskService extends AbstractEntityService<Task> implements IT
     public boolean removeAll() {
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
-        entityManager.createQuery("delete from Task", Task.class);
+        entityManager.createQuery("delete from Task").executeUpdate();
         entityManager.getTransaction().commit();
         return true;
     }

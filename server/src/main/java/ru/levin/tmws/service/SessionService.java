@@ -3,7 +3,6 @@ package ru.levin.tmws.service;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.service.ISessionService;
-import ru.levin.tmws.entity.Project;
 import ru.levin.tmws.entity.Session;
 import ru.levin.tmws.util.ServiceUtil;
 
@@ -56,7 +55,7 @@ public final class SessionService extends AbstractEntityService<Session> impleme
 
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
-        entityManager.createQuery("delete from Session s where s.user.id = '" + userId + "'", Session.class);
+        entityManager.createQuery("delete from Session s where s.user.id = '" + userId + "'").executeUpdate();
         entityManager.getTransaction().commit();
     }
 
@@ -99,7 +98,7 @@ public final class SessionService extends AbstractEntityService<Session> impleme
     public boolean removeAll() {
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
-        entityManager.createQuery("delete from Session", Project.class);
+        entityManager.createQuery("delete from Session").executeUpdate();
         entityManager.getTransaction().commit();
         return true;
     }
