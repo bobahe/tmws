@@ -23,6 +23,13 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
+@NamedEntityGraph(
+        name = "project-graph",
+        attributeNodes = {
+                @NamedAttributeNode("tasks"),
+                @NamedAttributeNode("user")
+        }
+)
 @Entity
 @Table(name = "app_project")
 @XmlAccessorType(XmlAccessType.NONE)

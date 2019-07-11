@@ -17,6 +17,13 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
+@NamedEntityGraph(
+        name = "task-graph",
+        attributeNodes = {
+                @NamedAttributeNode("project"),
+                @NamedAttributeNode("user")
+        }
+)
 @Entity
 @Table(name = "app_task")
 public final class Task extends AbstractHasOwnerEntity implements IContainsDatesAndStatus, Serializable {

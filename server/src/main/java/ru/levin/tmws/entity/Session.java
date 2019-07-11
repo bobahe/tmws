@@ -5,14 +5,18 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.UUID;
 
 @Getter
 @Setter
+@NamedEntityGraph(
+        name = "session-graph",
+        attributeNodes = {
+                @NamedAttributeNode("user")
+        }
+)
 @Entity
 @Table(name = "app_session")
 public final class Session extends AbstractHasOwnerEntity implements Serializable {
