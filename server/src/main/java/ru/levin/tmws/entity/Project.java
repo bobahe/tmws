@@ -75,15 +75,6 @@ public final class Project extends AbstractHasOwnerEntity implements IContainsDa
         this.id = UUID.randomUUID().toString();
     }
 
-    @Nullable
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(@Nullable final String description) {
-        this.description = description;
-    }
-
     @Override
     public @Nullable String getId() {
         return this.id;
