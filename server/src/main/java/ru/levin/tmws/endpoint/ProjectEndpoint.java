@@ -32,8 +32,8 @@ public class ProjectEndpoint implements IProjectEndpoint {
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
         if (project == null) throw new SaveException();
         if (project.getName() == null || project.getName().isEmpty()) throw new SaveException();
-        if (session.getUserId() == null) throw new SessionValidationException();
-        project.setUserId(session.getUserId());
+        if (session.getUser() == null) throw new SessionValidationException();
+        project.setUser(session.getUser());
         return serviceLocator.getProjectService().save(project);
     }
 
@@ -59,14 +59,16 @@ public class ProjectEndpoint implements IProjectEndpoint {
     public void removeProjectAll(final @Nullable Session session) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        serviceLocator.getProjectService().removeByUserId(session.getUserId());
+        if (session.getUser() == null) throw new InternalServiceException();
+        serviceLocator.getProjectService().removeByUserId(session.getUser().getId());
     }
 
     @Override
     public @NotNull List<Project> getProjectAll(final @Nullable Session session) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        @NotNull final List<Project> allByUserId = serviceLocator.getProjectService().findAllByUserId(session.getUserId());
+        if (session.getUser() == null) throw new InternalServiceException();
+        @NotNull final List<Project> allByUserId = serviceLocator.getProjectService().findAllByUserId(session.getUser().getId());
         return allByUserId;
     }
 
@@ -76,26 +78,27 @@ public class ProjectEndpoint implements IProjectEndpoint {
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
         if (project == null) throw new NoSelectedProjectException();
         if (project.getId() == null || project.getId().isEmpty()) throw new NoSelectedProjectException();
-        if (session.getUserId() == null) throw new SessionValidationException();
-        if (project.getUserId() == null || !session.getUserId().equals(project.getUserId())) {
+        if (session.getUser() == null) throw new SessionValidationException();
+        if (session.getUser().getId() == null) throw new InternalServiceException();
+        if (project.getUser() == null || !session.getUser().getId().equals(project.getUser().getId())) {
             throw new AccessForbiddenException();
         }
-        return serviceLocator.getTaskService().findAllByUserIdAndProjectId(project.getUserId(), project.getId());
+        return serviceLocator.getTaskService().findAllByUserIdAndProjectId(project.getUser().getId(), project.getId());
     }
 
     @Override
     public @Nullable Project getProjectById(final @Nullable Session session, final int projectId) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        if (session.getUserId() == null || session.getUserId().isEmpty()) throw new SessionValidationException();
-        return serviceLocator.getProjectService().findOneByIndex(session.getUserId(), projectId);
+        if (session.getUser() == null) throw new SessionValidationException();
+        return serviceLocator.getProjectService().findOneByIndex(session.getUser().getId(), projectId);
     }
 
     @Override
     public @NotNull List<Project> getProjectByNameOrDescription(final @Nullable Session session, final @Nullable String matcher) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        if (session.getUserId() == null || session.getUserId().isEmpty()) throw new SessionValidationException();
+        if (session.getUser() == null) throw new SessionValidationException();
         if (matcher == null) throw new InternalServiceException();
         return serviceLocator.getProjectService().findAllByPartOfNameOrDescription(matcher);
     }

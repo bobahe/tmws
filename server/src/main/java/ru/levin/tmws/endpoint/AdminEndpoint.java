@@ -27,7 +27,8 @@ public class AdminEndpoint implements IAdminEndpoint {
     public void serialize(final @Nullable Session session) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), serviceLocator.getUserService());
+        if (session.getUser() == null) throw new InternalServiceException();
+        final boolean isAdmin = ServiceUtil.isAdmin(session.getUser().getId(), serviceLocator.getUserService());
         if (!isAdmin) throw new AccessForbiddenException();
         serviceLocator.getPersistService().serialize(serviceLocator);
     }
@@ -36,7 +37,8 @@ public class AdminEndpoint implements IAdminEndpoint {
     public void deserialize(final @Nullable Session session) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), serviceLocator.getUserService());
+        if (session.getUser() == null) throw new InternalServiceException();
+        final boolean isAdmin = ServiceUtil.isAdmin(session.getUser().getId(), serviceLocator.getUserService());
         if (!isAdmin) throw new AccessForbiddenException();
         serviceLocator.getPersistService().deserialize(serviceLocator);
     }
@@ -45,7 +47,8 @@ public class AdminEndpoint implements IAdminEndpoint {
     public void saveFxmlXml(final @Nullable Session session) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), serviceLocator.getUserService());
+        if (session.getUser() == null) throw new InternalServiceException();
+        final boolean isAdmin = ServiceUtil.isAdmin(session.getUser().getId(), serviceLocator.getUserService());
         if (!isAdmin) throw new AccessForbiddenException();
         serviceLocator.getPersistService().saveFxmlXml(serviceLocator);
     }
@@ -54,7 +57,8 @@ public class AdminEndpoint implements IAdminEndpoint {
     public void saveFxmlJson(final @Nullable Session session) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), serviceLocator.getUserService());
+        if (session.getUser() == null) throw new InternalServiceException();
+        final boolean isAdmin = ServiceUtil.isAdmin(session.getUser().getId(), serviceLocator.getUserService());
         if (!isAdmin) throw new AccessForbiddenException();
         serviceLocator.getPersistService().saveFxmlJson(serviceLocator);
     }
@@ -63,7 +67,8 @@ public class AdminEndpoint implements IAdminEndpoint {
     public void loadFxmlXml(final @Nullable Session session) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), serviceLocator.getUserService());
+        if (session.getUser() == null) throw new InternalServiceException();
+        final boolean isAdmin = ServiceUtil.isAdmin(session.getUser().getId(), serviceLocator.getUserService());
         if (!isAdmin) throw new AccessForbiddenException();
         serviceLocator.getPersistService().loadFxmlXml(serviceLocator);
     }
@@ -72,7 +77,8 @@ public class AdminEndpoint implements IAdminEndpoint {
     public void loadFxmlJson(final @Nullable Session session) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), serviceLocator.getUserService());
+        if (session.getUser() == null) throw new InternalServiceException();
+        final boolean isAdmin = ServiceUtil.isAdmin(session.getUser().getId(), serviceLocator.getUserService());
         if (!isAdmin) throw new AccessForbiddenException();
         serviceLocator.getPersistService().loadFxmlJson(serviceLocator);
     }
@@ -81,7 +87,8 @@ public class AdminEndpoint implements IAdminEndpoint {
     public void saveJaxbXml(final @Nullable Session session) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), serviceLocator.getUserService());
+        if (session.getUser() == null) throw new InternalServiceException();
+        final boolean isAdmin = ServiceUtil.isAdmin(session.getUser().getId(), serviceLocator.getUserService());
         if (!isAdmin) throw new AccessForbiddenException();
         serviceLocator.getPersistService().saveJaxbXml(serviceLocator);
     }
@@ -90,7 +97,8 @@ public class AdminEndpoint implements IAdminEndpoint {
     public void saveJaxbJson(final @Nullable Session session) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), serviceLocator.getUserService());
+        if (session.getUser() == null) throw new InternalServiceException();
+        final boolean isAdmin = ServiceUtil.isAdmin(session.getUser().getId(), serviceLocator.getUserService());
         if (!isAdmin) throw new AccessForbiddenException();
         serviceLocator.getPersistService().saveJaxbJson(serviceLocator);
     }
@@ -99,7 +107,8 @@ public class AdminEndpoint implements IAdminEndpoint {
     public void loadJaxbXml(final @Nullable Session session) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), serviceLocator.getUserService());
+        if (session.getUser() == null) throw new InternalServiceException();
+        final boolean isAdmin = ServiceUtil.isAdmin(session.getUser().getId(), serviceLocator.getUserService());
         if (!isAdmin) throw new AccessForbiddenException();
         serviceLocator.getPersistService().loadJaxbXml(serviceLocator);
     }
@@ -108,7 +117,8 @@ public class AdminEndpoint implements IAdminEndpoint {
     public void loadJaxbJson(final @Nullable Session session) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), serviceLocator.getUserService());
+        if (session.getUser() == null) throw new InternalServiceException();
+        final boolean isAdmin = ServiceUtil.isAdmin(session.getUser().getId(), serviceLocator.getUserService());
         if (!isAdmin) throw new AccessForbiddenException();
         serviceLocator.getPersistService().loadJaxbJson(serviceLocator);
     }

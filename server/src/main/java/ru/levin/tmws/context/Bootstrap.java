@@ -2,29 +2,23 @@ package ru.levin.tmws.context;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.ibatis.datasource.pooled.PooledDataSource;
-import org.apache.ibatis.mapping.Environment;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-import org.apache.ibatis.transaction.TransactionFactory;
-import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
+import org.hibernate.boot.Metadata;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Environment;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.IEndpoint;
-import ru.levin.tmws.api.repository.IProjectRepository;
-import ru.levin.tmws.api.repository.ISessionRepository;
-import ru.levin.tmws.api.repository.ITaskRepository;
-import ru.levin.tmws.api.repository.IUserRepository;
 import ru.levin.tmws.api.service.*;
-import ru.levin.tmws.entity.RoleType;
-import ru.levin.tmws.entity.User;
+import ru.levin.tmws.entity.*;
 import ru.levin.tmws.service.*;
 
-import javax.sql.DataSource;
+import javax.persistence.EntityManagerFactory;
 import javax.xml.ws.Endpoint;
 import java.lang.reflect.Constructor;
+import java.util.HashMap;
+import java.util.Map;
 
 @NoArgsConstructor
 public final class Bootstrap implements IServiceLocator {
@@ -33,23 +27,23 @@ public final class Bootstrap implements IServiceLocator {
     private final IPropertyService propertyService = new PropertyService();
 
     @NotNull
-    private SqlSessionFactory sessionFactory = getSqlSessionFactory();
+    private EntityManagerFactory entityManagerFactory = getEntityManagerFactory();
 
     @NotNull
     @Getter
-    private final IProjectService projectService = new ProjectService(sessionFactory);
+    private final IProjectService projectService = new ProjectService(entityManagerFactory);
 
     @NotNull
     @Getter
-    private final ITaskService taskService = new TaskService(sessionFactory);
+    private final ITaskService taskService = new TaskService(entityManagerFactory);
 
     @NotNull
     @Getter
-    private final IUserService userService = new UserService(sessionFactory);
+    private final IUserService userService = new UserService(entityManagerFactory);
 
     @NotNull
     @Getter
-    private final ISessionService sessionService = new SessionService(sessionFactory);
+    private final ISessionService sessionService = new SessionService(entityManagerFactory);
 
     @NotNull
     @Getter
@@ -94,21 +88,27 @@ public final class Bootstrap implements IServiceLocator {
         }
     }
 
-    private SqlSessionFactory getSqlSessionFactory() {
+    private EntityManagerFactory getEntityManagerFactory() {
         propertyService.init();
-        @Nullable final String user = propertyService.getJdbcUsername();
-        @Nullable final String password = propertyService.getJdbcPassword();
-        @Nullable final String url = propertyService.getJdbcUrl();
-        @Nullable final String driver = propertyService.getJdbcDriver();
-        final DataSource dataSource = new PooledDataSource(driver, url, user, password);
-        final TransactionFactory transactionFactory = new JdbcTransactionFactory();
-        final Environment environment = new Environment("development", transactionFactory, dataSource);
-        final Configuration configuration = new Configuration(environment);
-        configuration.addMapper(IUserRepository.class);
-        configuration.addMapper(IProjectRepository.class);
-        configuration.addMapper(ISessionRepository.class);
-        configuration.addMapper(ITaskRepository.class);
-        return new SqlSessionFactoryBuilder().build(configuration);
+        @NotNull final Map<String, String> settings = new HashMap<>();
+        settings.put(Environment.DRIVER, propertyService.getJdbcDriver());
+        settings.put(Environment.URL, propertyService.getJdbcUrl());
+        settings.put(Environment.USER, propertyService.getJdbcUsername());
+        settings.put(Environment.PASS, propertyService.getJdbcPassword());
+        settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQL5InnoDBDialect");
+        settings.put(Environment.HBM2DDL_AUTO, "update");
+        settings.put(Environment.SHOW_SQL, "true");
+        settings.put(Environment.HBM2DDL_CHARSET_NAME, "utf8");
+        @NotNull final StandardServiceRegistryBuilder registryBuilder = new StandardServiceRegistryBuilder();
+        registryBuilder.applySettings(settings);
+        final StandardServiceRegistry registry = registryBuilder.build();
+        final MetadataSources sources = new MetadataSources(registry);
+        sources.addAnnotatedClass(Task.class);
+        sources.addAnnotatedClass(Project.class);
+        sources.addAnnotatedClass(User.class);
+        sources.addAnnotatedClass(Session.class);
+        final Metadata metadata = sources.getMetadataBuilder().build();
+        return metadata.getSessionFactoryBuilder().build();
     }
 
 }

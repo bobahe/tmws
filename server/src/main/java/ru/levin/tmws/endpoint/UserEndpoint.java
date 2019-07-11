@@ -31,16 +31,17 @@ public class UserEndpoint implements IUserEndpoint {
     public void changeUserPassword(final @Nullable Session session, final @Nullable String password) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        if (session.getUserId() == null || session.getUserId().isEmpty()) throw new SessionValidationException();
+        if (session.getUser() == null) throw new SessionValidationException();
         if (password == null || password.isEmpty()) throw new SaveException();
-        serviceLocator.getUserService().setNewPassword(serviceLocator.getUserService().findById(session.getUserId()), password);
+        serviceLocator.getUserService()
+                .setNewPassword(serviceLocator.getUserService().findById(session.getUser().getId()), password);
     }
 
     @Override
     public void changeProfile(final @Nullable Session session, final @Nullable User user) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        if (session.getUserId() == null || session.getUserId().isEmpty()) throw new SessionValidationException();
+        if (session.getUser() == null) throw new SessionValidationException();
         if (user == null) throw new SaveException();
         @Nullable final User updatedUser =  serviceLocator.getUserService().update(user);
         if (updatedUser == null) throw new SaveException();

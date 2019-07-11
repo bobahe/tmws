@@ -7,29 +7,48 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.IContainsDatesAndStatus;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
 @Setter
 @ToString
+@Entity
+@Table(name = "app_project")
 public final class Project extends AbstractHasOwnerEntity implements IContainsDatesAndStatus, Serializable {
 
+    @Column
     @Nullable
     private String name;
 
+    @Column
     @Nullable
     private String description;
 
+    @Column
     @Nullable
     private Date startDate;
 
+    @Column
     @Nullable
     private Date endDate;
 
+    @Column
+    @Enumerated
     @Nullable
-    private Status status;
+    private Status status = Status.PLANNED;
+
+    @OneToMany(
+            mappedBy = "project",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    @Nullable
+    private List<Task> tasks;
 
     public Project() {
         this.id = UUID.randomUUID().toString();
@@ -44,15 +63,6 @@ public final class Project extends AbstractHasOwnerEntity implements IContainsDa
         this.description = description;
     }
 
-    @Nullable
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(@NotNull final String userId) {
-        this.userId = userId;
-    }
-
     @Override
     public @Nullable String getId() {
         return this.id;
@@ -61,6 +71,16 @@ public final class Project extends AbstractHasOwnerEntity implements IContainsDa
     @Override
     public void setId(final @NotNull String id) {
         this.id = id;
+    }
+
+    @Override
+    public @Nullable User getUser() {
+        return this.user;
+    }
+
+    @Override
+    public void setUser(final @NotNull User user) {
+        this.user = user;
     }
 
 }

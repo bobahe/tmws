@@ -87,7 +87,7 @@ public final class TaskCreateCommand extends AbstractCommand {
             terminalService.println(JOIN_TO_PROJECT_PROMPT);
             @NotNull final String joinAnswer = terminalService.getLine();
             if (!joinAnswer.equals("n")) {
-                task.setProjectId(selectedProject.getId());
+                task.setProject(selectedProject);
             }
         }
         taskEndpoint.createTask(serviceLocator.getCurrentSession(), task);

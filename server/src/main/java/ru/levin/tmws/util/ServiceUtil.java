@@ -56,7 +56,7 @@ public class ServiceUtil {
     public static Session checkSession(@Nullable final Session session, @NotNull final ISessionService service) {
         if (session == null) throw new NullSessionException();
         if (session.getSignature() == null || session.getSignature().isEmpty()) throw new SessionValidationException();
-        if (session.getUserId() == null || session.getUserId().isEmpty()) throw new SessionValidationException();
+        if (session.getUser() == null) throw new SessionValidationException();
         @Nullable final Session serverSession = service.findById(session.getId());
         if (serverSession == null) throw new SessionValidationException();
         if (serverSession.getSignature() == null || serverSession.getSignature().isEmpty()) {

@@ -73,7 +73,7 @@ public final class TaskProjectTaskListCommand extends AbstractCommand {
             } else {
                 terminalService.println("\tEnd date: not set");
             }
-            terminalService.println("\tStatus: " + task.getStatus().value());
+            terminalService.println("\tStatus: " + task.getStatus());
         }
     }
 

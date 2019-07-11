@@ -73,7 +73,7 @@ public final class ProjectListCommand extends AbstractCommand {
             } else {
                 terminalService.println("\tEnd date: not set");
             }
-            terminalService.println("\tStatus: " + project.getStatus().value());
+            terminalService.println("\tStatus: " + project.getStatus());
         }
     }
 

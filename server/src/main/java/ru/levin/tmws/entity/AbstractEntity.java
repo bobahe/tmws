@@ -3,10 +3,16 @@ package ru.levin.tmws.entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 
+@MappedSuperclass
 public abstract class AbstractEntity implements Serializable {
 
+    @Id
+    @Column(length = 191)
     @Nullable
     protected String id;
 

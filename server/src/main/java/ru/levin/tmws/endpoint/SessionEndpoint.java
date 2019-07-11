@@ -38,7 +38,7 @@ public class SessionEndpoint implements ISessionEndpoint {
         @NotNull final List<Session> sessions = serviceLocator.getSessionService().findAllByUserId(user.getId());
         if (sessions.size() > 0) return sessions.get(0);
         @NotNull final Session session = new Session();
-        session.setUserId(user.getId());
+        session.setUser(user);
         @Nullable final Session savedSession = serviceLocator.getSessionService().save(session);
         return savedSession;
     }
@@ -47,7 +47,8 @@ public class SessionEndpoint implements ISessionEndpoint {
     public @Nullable User getUser(final @Nullable Session session) {
         if (serviceLocator == null) throw new InternalServiceException();
         @NotNull final Session serverSession = ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        @Nullable final User user = serviceLocator.getUserService().findById(serverSession.getUserId());
+        if (serverSession.getUser() == null) throw new InternalServiceException();
+        @Nullable final User user = serviceLocator.getUserService().findById(serverSession.getUser().getId());
         return user;
     }
 
@@ -55,7 +56,8 @@ public class SessionEndpoint implements ISessionEndpoint {
     public @NotNull List<Session> getSessionList(final @Nullable Session session) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), serviceLocator.getUserService());
+        if (session.getUser() == null) throw new InternalServiceException();
+        final boolean isAdmin = ServiceUtil.isAdmin(session.getUser().getId(), serviceLocator.getUserService());
         if (!isAdmin) throw new AccessForbiddenException();
         return serviceLocator.getSessionService().getAll();
     }
@@ -71,7 +73,8 @@ public class SessionEndpoint implements ISessionEndpoint {
     public void closeSessionAll(final @Nullable Session session) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), serviceLocator.getUserService());
+        if (session.getUser() == null) throw new InternalServiceException();
+        final boolean isAdmin = ServiceUtil.isAdmin(session.getUser().getId(), serviceLocator.getUserService());
         if (!isAdmin) throw new AccessForbiddenException();
         serviceLocator.getSessionService().removeAll();
     }

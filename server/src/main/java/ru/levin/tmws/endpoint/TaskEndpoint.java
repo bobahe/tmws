@@ -30,10 +30,10 @@ public class TaskEndpoint implements ITaskEndpoint {
     public @Nullable Task createTask(final @Nullable Session session, final @Nullable Task task) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        if (session.getUserId() == null || session.getUserId().isEmpty()) throw new SessionValidationException();
+        if (session.getUser() == null) throw new SessionValidationException();
         if (task == null) throw new SaveException();
         if (task.getName() == null || task.getName().isEmpty()) throw new SaveException();
-        task.setUserId(session.getUserId());
+        task.setUser(session.getUser());
         return serviceLocator.getTaskService().save(task);
     }
 
@@ -42,16 +42,19 @@ public class TaskEndpoint implements ITaskEndpoint {
                                  final @Nullable String projectId) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        if (session.getUserId() == null || session.getUserId().isEmpty()) throw new SessionValidationException();
+        if (session.getUser() == null) throw new SessionValidationException();
         if (taskId == null || projectId == null) throw new SaveException();
         @Nullable final Task task = serviceLocator.getTaskService().findOneById(taskId);
         @Nullable final Project project = serviceLocator.getProjectService().findOneById(projectId);
         if (task == null || project == null) throw new SaveException();
-        if (task.getUserId() == null || project.getUserId() == null) throw new SaveException();
-        if (!task.getUserId().equals(session.getUserId()) || !project.getUserId().equals(session.getUserId())) {
+        if (task.getUser() == null || project.getUser() == null) throw new SaveException();
+        if (task.getUser().getId() == null || session.getUser().getId() == null) throw new InternalServiceException();
+        if (project.getUser().getId() == null) throw new InternalServiceException();
+        if (!task.getUser().getId().equals(session.getUser().getId()) ||
+                !project.getUser().getId().equals(session.getUser().getId())) {
             throw new AccessForbiddenException();
         }
-        task.setProjectId(project.getId());
+        task.setProject(project);
         serviceLocator.getTaskService().update(task);
     }
 
@@ -59,7 +62,7 @@ public class TaskEndpoint implements ITaskEndpoint {
     public void updateTask(final @Nullable Session session, final @Nullable Task task) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        if (session.getUserId() == null || session.getUserId().isEmpty()) throw new SessionValidationException();
+        if (session.getUser() == null) throw new SessionValidationException();
         if (task == null) throw new UpdateException();
         if (task.getId() == null || task.getId().isEmpty()) throw new UpdateException();
         if (task.getName() == null || task.getName().isEmpty()) throw new UpdateException();
@@ -70,7 +73,7 @@ public class TaskEndpoint implements ITaskEndpoint {
     public void removeTask(final @Nullable Session session, final @Nullable Task task) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        if (session.getUserId() == null || session.getUserId().isEmpty()) throw new SessionValidationException();
+        if (session.getUser() == null) throw new SessionValidationException();
         if (task == null) throw new UpdateException();
         serviceLocator.getTaskService().remove(task);
     }
@@ -79,15 +82,16 @@ public class TaskEndpoint implements ITaskEndpoint {
     public void removeTaskAll(final @Nullable Session session) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        if (session.getUserId() == null || session.getUserId().isEmpty()) throw new SessionValidationException();
-        serviceLocator.getTaskService().removeByUserId(session.getUserId());
+        if (session.getUser() == null) throw new SessionValidationException();
+        serviceLocator.getTaskService().removeByUserId(session.getUser().getId());
     }
 
     @Override
     public @NotNull List<Task> getTaskAll(final @Nullable Session session) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        @NotNull final List<Task> allByUserId = serviceLocator.getTaskService().findAllByUserId(session.getUserId());
+        if (session.getUser() == null) throw new InternalServiceException();
+        @NotNull final List<Task> allByUserId = serviceLocator.getTaskService().findAllByUserId(session.getUser().getId());
         return allByUserId;
     }
 
@@ -95,15 +99,15 @@ public class TaskEndpoint implements ITaskEndpoint {
     public @Nullable Task getTaskById(final @Nullable Session session, final int taskId) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        if (session.getUserId() == null || session.getUserId().isEmpty()) throw new SessionValidationException();
-        return serviceLocator.getTaskService().findOneByIndex(session.getUserId(), taskId);
+        if (session.getUser() == null) throw new SessionValidationException();
+        return serviceLocator.getTaskService().findOneByIndex(session.getUser().getId(), taskId);
     }
 
     @Override
     public @NotNull List<Task> getTaskByNameOrDescription(final @Nullable Session session, final @Nullable String matcher) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        if (session.getUserId() == null || session.getUserId().isEmpty()) throw new SessionValidationException();
+        if (session.getUser() == null) throw new SessionValidationException();
         if (matcher == null) throw new InternalServiceException();
         return serviceLocator.getTaskService().findAllByPartOfNameOrDescription(matcher);
     }

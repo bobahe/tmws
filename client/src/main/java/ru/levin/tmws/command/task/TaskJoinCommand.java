@@ -66,7 +66,7 @@ public final class TaskJoinCommand extends AbstractCommand {
         terminalService.println(SELECTED_TASK_MESSAGE + selectedTask);
         terminalService.println(getDescription() + "? (Y/n)");
         @NotNull final String joinAnswer = terminalService.getLine();
-        if (!"n".equals(joinAnswer)) selectedTask.setProjectId(selectedProject.getId());
+        if (!"n".equals(joinAnswer)) selectedTask.setProject(selectedProject);
 
         taskEndpoint.updateTask(serviceLocator.getCurrentSession(), selectedTask);
     }

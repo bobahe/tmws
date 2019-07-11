@@ -3,16 +3,21 @@ package ru.levin.tmws.entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 
+@MappedSuperclass
 public abstract class AbstractHasOwnerEntity extends AbstractEntity implements Serializable {
 
+    @ManyToOne(fetch = FetchType.LAZY)
     @Nullable
-    protected String userId;
+    protected User user;
 
     @Nullable
-    public abstract String getUserId();
+    public abstract User getUser();
 
-    public abstract void setUserId(@NotNull final String userId);
+    public abstract void setUser(@NotNull final User user);
 
 }
