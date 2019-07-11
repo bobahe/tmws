@@ -97,7 +97,7 @@ public final class TaskService extends AbstractEntityService<Task> implements IT
         entityManager.getTransaction().begin();
         @NotNull final List<Task> tasks = entityManager
                 .createQuery(
-                        "from Task t where t.name like %" + partOfName + "% or t.description like %" + partOfName + "%",
+                        "from Task t where t.name like '%" + partOfName + "%' or t.description like '%" + partOfName + "%'",
                         Task.class
                 )
                 .getResultList();

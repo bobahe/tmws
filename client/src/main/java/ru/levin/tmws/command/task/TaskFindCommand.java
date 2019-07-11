@@ -69,7 +69,7 @@ public final class TaskFindCommand extends AbstractCommand {
                 terminalService.println("\tEnd date: not set");
             }
 
-            terminalService.println("\tProject: " + task.getProject().getName());
+            if (task.getProject() != null) terminalService.println("\tProject: " + task.getProject().getName());
             terminalService.println("\tStatus: " + task.getStatus().value());
         }
     }

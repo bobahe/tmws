@@ -122,7 +122,7 @@ public final class ProjectService extends AbstractEntityService<Project> impleme
         entityManager.getTransaction().begin();
         @NotNull final List<Project> projects = entityManager
                 .createQuery(
-                        "from Project p where p.name like %" + partOfName + "% or p.description like %" + partOfName + "%",
+                        "from Project p where p.name like '%" + partOfName + "%' or p.description like '%" + partOfName + "%'",
                         Project.class
                 )
                 .getResultList();
