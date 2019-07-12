@@ -5,8 +5,6 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.IServiceLocator;
-import ru.levin.tmws.entity.Project;
-import ru.levin.tmws.entity.Task;
 
 import javax.xml.bind.annotation.*;
 import java.io.Serializable;
@@ -22,12 +20,12 @@ public class Domain implements Serializable {
     @Nullable
     @XmlElement(name = "project")
     @XmlElementWrapper(name = "projects")
-    private final List<Project> projects = new ArrayList<>();
+    private final List<ProjectDTO> projects = new ArrayList<>();
 
     @Nullable
     @XmlElement(name = "task")
     @XmlElementWrapper(name = "tasks")
-    private final List<Task> tasks = new ArrayList<>();
+    private final List<TaskDTO> tasks = new ArrayList<>();
 
     public void initFromInternalStorage(@NotNull final IServiceLocator serviceLocator) {
         projects.addAll(serviceLocator.getProjectService().getAll());

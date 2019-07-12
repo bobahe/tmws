@@ -4,8 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.IProjectEndpoint;
-import ru.levin.tmws.api.endpoint.Project;
-import ru.levin.tmws.api.endpoint.Task;
+import ru.levin.tmws.api.endpoint.ProjectDTO;
+import ru.levin.tmws.api.endpoint.TaskDTO;
 import ru.levin.tmws.api.service.ITerminalService;
 import ru.levin.tmws.command.AbstractCommand;
 import ru.levin.tmws.exception.NoSelectedProjectException;
@@ -52,14 +52,14 @@ public final class TaskProjectTaskListCommand extends AbstractCommand {
 
     @Override
     public void execute() {
-        @Nullable final Project selectedProject = serviceLocator.getSelectedProject();
+        @Nullable final ProjectDTO selectedProject = serviceLocator.getSelectedProject();
         if (selectedProject == null) throw new NoSelectedProjectException();
 
         terminalService.println(getTitle() + " for " + selectedProject.getName());
-        @NotNull final List<Task> taskList = projectEndpoint.getProjectTasks(serviceLocator.getCurrentSession(), selectedProject);
+        @NotNull final List<TaskDTO> taskList = projectEndpoint.getProjectTasks(serviceLocator.getCurrentSession(), selectedProject);
 
         for (int i = 0; i < taskList.size(); i++) {
-            @NotNull final Task task = taskList.get(i);
+            @NotNull final TaskDTO task = taskList.get(i);
             if (task.getStatus() == null) throw new NoStatusException();
             terminalService.println((i + 1) + ". " + task.getName());
             terminalService.println("\tDescription: " + task.getDescription());

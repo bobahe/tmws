@@ -8,12 +8,17 @@ import ru.levin.tmws.entity.Status;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "app_task")
 public class TaskDTO extends AbstractHasOwnerDTO {
+
+    public TaskDTO() {
+        this.id = UUID.randomUUID().toString();
+    }
 
     @Column
     @Nullable
@@ -38,7 +43,7 @@ public class TaskDTO extends AbstractHasOwnerDTO {
     @Column
     @Enumerated(value = EnumType.STRING)
     @Nullable
-    private Status status;
+    private Status status = Status.PLANNED;
 
     @Override
     public @Nullable String getUserId() {

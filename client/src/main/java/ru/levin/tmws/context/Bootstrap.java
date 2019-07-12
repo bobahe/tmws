@@ -6,9 +6,9 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.IServiceLocator;
-import ru.levin.tmws.api.endpoint.Project;
-import ru.levin.tmws.api.endpoint.Session;
-import ru.levin.tmws.api.endpoint.Task;
+import ru.levin.tmws.api.endpoint.ProjectDTO;
+import ru.levin.tmws.api.endpoint.SessionDTO;
+import ru.levin.tmws.api.endpoint.TaskDTO;
 import ru.levin.tmws.api.service.ITerminalService;
 import ru.levin.tmws.command.AbstractCommand;
 import ru.levin.tmws.endpoint.*;
@@ -53,17 +53,17 @@ public final class Bootstrap implements IServiceLocator {
     @Nullable
     @Getter
     @Setter
-    private Session currentSession;
+    private SessionDTO currentSession;
 
     @Nullable
     @Getter
     @Setter
-    private Project selectedProject;
+    private ProjectDTO selectedProject;
 
     @Nullable
     @Getter
     @Setter
-    private Task selectedTask;
+    private TaskDTO selectedTask;
 
     public void init(@NotNull final Class[] commands) {
         registerCommands(commands);

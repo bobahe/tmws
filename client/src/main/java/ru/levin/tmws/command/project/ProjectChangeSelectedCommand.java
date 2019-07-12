@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.IProjectEndpoint;
-import ru.levin.tmws.api.endpoint.Project;
+import ru.levin.tmws.api.endpoint.ProjectDTO;
 import ru.levin.tmws.api.endpoint.Status;
 import ru.levin.tmws.api.service.ITerminalService;
 import ru.levin.tmws.command.AbstractCommand;
@@ -70,7 +70,7 @@ public final class ProjectChangeSelectedCommand extends AbstractCommand {
     public void execute() throws Exception {
         if (serviceLocator.getSelectedProject() == null) throw new NoSelectedProjectException();
         terminalService.println(getTitle());
-        @NotNull final Project project = serviceLocator.getSelectedProject();
+        @NotNull final ProjectDTO project = serviceLocator.getSelectedProject();
         terminalService.println(NAME_PROMPT);
         project.setName(terminalService.getLine());
         terminalService.println(DESCRIPTION_PROMPT);

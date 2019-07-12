@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.ISessionEndpoint;
 import ru.levin.tmws.api.endpoint.IUserEndpoint;
-import ru.levin.tmws.api.endpoint.User;
+import ru.levin.tmws.api.endpoint.UserDTO;
 import ru.levin.tmws.api.service.ITerminalService;
 import ru.levin.tmws.command.AbstractCommand;
 import ru.levin.tmws.exception.NoSuchItemException;
@@ -53,7 +53,7 @@ public final class UserEditProfileCommand extends AbstractCommand {
 
     @Override
     public void execute() {
-        @Nullable final User currentUser = sessionEndpoint.getUser(serviceLocator.getCurrentSession());
+        @Nullable final UserDTO currentUser = sessionEndpoint.getUser(serviceLocator.getCurrentSession());
         if (currentUser == null) throw new NoSuchItemException();
         terminalService.println("Enter login (saved: " + currentUser.getLogin() + "):");
         currentUser.setLogin(terminalService.getLine());

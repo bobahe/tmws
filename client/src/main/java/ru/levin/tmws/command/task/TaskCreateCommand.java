@@ -4,8 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.ITaskEndpoint;
-import ru.levin.tmws.api.endpoint.Project;
-import ru.levin.tmws.api.endpoint.Task;
+import ru.levin.tmws.api.endpoint.ProjectDTO;
+import ru.levin.tmws.api.endpoint.TaskDTO;
 import ru.levin.tmws.api.service.ITerminalService;
 import ru.levin.tmws.command.AbstractCommand;
 import ru.levin.tmws.util.CommandUtil;
@@ -67,7 +67,7 @@ public final class TaskCreateCommand extends AbstractCommand {
     @Override
     public void execute() throws Exception {
         terminalService.println(getTitle());
-        @NotNull final Task task = new Task();
+        @NotNull final TaskDTO task = new TaskDTO();
         terminalService.println(NAME_PROMPT);
         task.setName(terminalService.getLine());
         terminalService.println(DESCRIPTION_PROMPT);
@@ -82,12 +82,12 @@ public final class TaskCreateCommand extends AbstractCommand {
         if (endDate != null) {
             task.setEndDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(endDate.toInstant().toString()));
         }
-        @Nullable final Project selectedProject = serviceLocator.getSelectedProject();
+        @Nullable final ProjectDTO selectedProject = serviceLocator.getSelectedProject();
         if (selectedProject != null) {
             terminalService.println(JOIN_TO_PROJECT_PROMPT);
             @NotNull final String joinAnswer = terminalService.getLine();
             if (!joinAnswer.equals("n")) {
-                task.setProject(selectedProject);
+                task.setProjectId(selectedProject.getId());
             }
         }
         taskEndpoint.createTask(serviceLocator.getCurrentSession(), task);

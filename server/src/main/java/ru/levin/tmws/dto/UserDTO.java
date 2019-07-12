@@ -7,12 +7,17 @@ import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.entity.RoleType;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "app_user")
 public class UserDTO extends AbstractDTO {
+
+    public UserDTO() {
+        this.id = UUID.randomUUID().toString();
+    }
 
     @Column
     @Nullable

@@ -74,7 +74,7 @@ public final class Bootstrap implements IServiceLocator {
 
     private void createDefaultUsers() {
         if (userService.findById("38aca227-dc47-459f-bc0b-2134e260135c") == null) {
-            @NotNull final User admin = new User();
+            @NotNull final UserDTO admin = new UserDTO();
             admin.setId("38aca227-dc47-459f-bc0b-2134e260135c");
             admin.setLogin("admin");
             admin.setPassword("admin");
@@ -83,7 +83,7 @@ public final class Bootstrap implements IServiceLocator {
         }
 
         if (userService.findById("54d01220-0ecd-4ca2-a300-ff6ffc9b1254") == null) {
-            @NotNull final User user = new User();
+            @NotNull final UserDTO user = new UserDTO();
             user.setId("54d01220-0ecd-4ca2-a300-ff6ffc9b1254");
             user.setLogin("user");
             user.setPassword("user");

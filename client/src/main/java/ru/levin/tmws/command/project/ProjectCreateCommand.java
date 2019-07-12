@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.IProjectEndpoint;
-import ru.levin.tmws.api.endpoint.Project;
+import ru.levin.tmws.api.endpoint.ProjectDTO;
 import ru.levin.tmws.api.service.ITerminalService;
 import ru.levin.tmws.command.AbstractCommand;
 import ru.levin.tmws.util.CommandUtil;
@@ -64,7 +64,7 @@ public final class ProjectCreateCommand extends AbstractCommand {
     @Override
     public void execute() throws Exception {
         terminalService.println(getTitle());
-        @NotNull final Project project = new Project();
+        @NotNull final ProjectDTO project = new ProjectDTO();
         terminalService.println(NAME_PROMPT);
         project.setName(terminalService.getLine());
         terminalService.println(DESCRIPTION_PROMPT);

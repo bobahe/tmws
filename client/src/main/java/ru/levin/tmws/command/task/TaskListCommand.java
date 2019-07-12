@@ -3,7 +3,7 @@ package ru.levin.tmws.command.task;
 import org.jetbrains.annotations.NotNull;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.ITaskEndpoint;
-import ru.levin.tmws.api.endpoint.Task;
+import ru.levin.tmws.api.endpoint.TaskDTO;
 import ru.levin.tmws.api.service.ITerminalService;
 import ru.levin.tmws.command.AbstractCommand;
 import ru.levin.tmws.exception.NoStatusException;
@@ -50,7 +50,7 @@ public final class TaskListCommand extends AbstractCommand {
 
     @Override
     public void execute() {
-        @NotNull final List<Task> taskList = taskEndpoint.getTaskAll(serviceLocator.getCurrentSession());
+        @NotNull final List<TaskDTO> taskList = taskEndpoint.getTaskAll(serviceLocator.getCurrentSession());
         terminalService.println("Select option to sortTaskList list (1 by default):");
         terminalService.println("1. Saved order");
         terminalService.println("2. Start date");
@@ -59,7 +59,7 @@ public final class TaskListCommand extends AbstractCommand {
         @NotNull final String orderType = terminalService.getLine();
         CommandUtil.sortTaskList(orderType, taskList);
         for (int i = 0; i < taskList.size(); i++) {
-            @NotNull final Task task = taskList.get(i);
+            @NotNull final TaskDTO task = taskList.get(i);
             if (task.getStatus() == null) throw new NoStatusException();
             terminalService.println((i + 1) + ". " + task.getName());
             terminalService.println("\tDescription: " + task.getDescription());
@@ -73,7 +73,7 @@ public final class TaskListCommand extends AbstractCommand {
             } else {
                 terminalService.println("\tEnd date: not set");
             }
-            if (task.getProject() != null) terminalService.println("\tProject: " + task.getProject().getName());
+            terminalService.println("\tProject: " + task.getProjectId());
             terminalService.println("\tStatus: " + task.getStatus());
         }
     }

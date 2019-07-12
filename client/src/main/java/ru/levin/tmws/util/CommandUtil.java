@@ -2,8 +2,8 @@ package ru.levin.tmws.util;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.levin.tmws.api.endpoint.Project;
-import ru.levin.tmws.api.endpoint.Task;
+import ru.levin.tmws.api.endpoint.ProjectDTO;
+import ru.levin.tmws.api.endpoint.TaskDTO;
 import ru.levin.tmws.command.AbstractCommand;
 
 import java.text.ParseException;
@@ -30,7 +30,7 @@ public final class CommandUtil {
         }
     }
 
-    public static void sortTaskList(@NotNull final String sortType, @NotNull final List<Task> list) {
+    public static void sortTaskList(@NotNull final String sortType, @NotNull final List<TaskDTO> list) {
         switch (sortType) {
             case "2":
                 list.sort((o1, o2) -> {
@@ -47,14 +47,14 @@ public final class CommandUtil {
                 });
                 break;
             case "4":
-                list.sort(Comparator.comparing(Task::getStatus));
+                list.sort(Comparator.comparing(TaskDTO::getStatus));
                 break;
             default:
                 break;
         }
     }
 
-    public static void sortProjectList(@NotNull final String sortType, @NotNull final List<Project> list) {
+    public static void sortProjectList(@NotNull final String sortType, @NotNull final List<ProjectDTO> list) {
         switch (sortType) {
             case "2":
                 list.sort((o1, o2) -> {
@@ -71,7 +71,7 @@ public final class CommandUtil {
                 });
                 break;
             case "4":
-                list.sort(Comparator.comparing(Project::getStatus));
+                list.sort(Comparator.comparing(ProjectDTO::getStatus));
                 break;
             default:
                 break;

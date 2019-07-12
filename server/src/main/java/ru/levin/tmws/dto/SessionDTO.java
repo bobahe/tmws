@@ -8,12 +8,17 @@ import org.jetbrains.annotations.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "app_session")
 public class SessionDTO extends AbstractHasOwnerDTO {
+
+    public SessionDTO() {
+        this.id = UUID.randomUUID().toString();
+    }
 
     @Column
     @Nullable

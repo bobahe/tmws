@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.ISessionEndpoint;
-import ru.levin.tmws.api.endpoint.Session;
+import ru.levin.tmws.api.endpoint.SessionDTO;
 import ru.levin.tmws.api.service.ITerminalService;
 import ru.levin.tmws.command.AbstractCommand;
 
@@ -57,7 +57,7 @@ public final class UserLoginCommand extends AbstractCommand {
         @NotNull final String login = terminalService.getLine();
         terminalService.println(PASSWORD_PROMPT);
         @NotNull final String password = terminalService.getLine();
-        @Nullable Session session = sessionEndpoint.openSession(login, password);
+        @Nullable SessionDTO session = sessionEndpoint.openSession(login, password);
         serviceLocator.setCurrentSession(session);
     }
 

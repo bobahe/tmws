@@ -4,8 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.ITaskEndpoint;
-import ru.levin.tmws.api.endpoint.Project;
-import ru.levin.tmws.api.endpoint.Task;
+import ru.levin.tmws.api.endpoint.ProjectDTO;
+import ru.levin.tmws.api.endpoint.TaskDTO;
 import ru.levin.tmws.api.service.ITerminalService;
 import ru.levin.tmws.command.AbstractCommand;
 import ru.levin.tmws.exception.NoSelectedProjectException;
@@ -56,8 +56,8 @@ public final class TaskJoinCommand extends AbstractCommand {
 
     @Override
     public void execute() {
-        @Nullable final Project selectedProject = serviceLocator.getSelectedProject();
-        @Nullable final Task selectedTask = serviceLocator.getSelectedTask();
+        @Nullable final ProjectDTO selectedProject = serviceLocator.getSelectedProject();
+        @Nullable final TaskDTO selectedTask = serviceLocator.getSelectedTask();
         if (selectedProject == null || selectedProject.getId() == null) throw new NoSelectedProjectException();
         if (selectedTask == null) throw new NoSelectedTaskException();
 
@@ -66,7 +66,7 @@ public final class TaskJoinCommand extends AbstractCommand {
         terminalService.println(SELECTED_TASK_MESSAGE + selectedTask);
         terminalService.println(getDescription() + "? (Y/n)");
         @NotNull final String joinAnswer = terminalService.getLine();
-        if (!"n".equals(joinAnswer)) selectedTask.setProject(selectedProject);
+        if (!"n".equals(joinAnswer)) selectedTask.setProjectId(selectedProject.getId());
 
         taskEndpoint.updateTask(serviceLocator.getCurrentSession(), selectedTask);
     }

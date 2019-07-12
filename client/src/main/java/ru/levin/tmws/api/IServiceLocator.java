@@ -2,9 +2,9 @@ package ru.levin.tmws.api;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.levin.tmws.api.endpoint.Project;
-import ru.levin.tmws.api.endpoint.Session;
-import ru.levin.tmws.api.endpoint.Task;
+import ru.levin.tmws.api.endpoint.ProjectDTO;
+import ru.levin.tmws.api.endpoint.SessionDTO;
+import ru.levin.tmws.api.endpoint.TaskDTO;
 import ru.levin.tmws.api.service.ITerminalService;
 import ru.levin.tmws.command.AbstractCommand;
 import ru.levin.tmws.endpoint.*;
@@ -20,11 +20,11 @@ public interface IServiceLocator {
     @NotNull ProjectEndpointService getProjectService();
     @NotNull TaskEndpointService getTaskService();
     @NotNull SessionEndpointService getSessionService();
-    @Nullable Session getCurrentSession();
-    void setCurrentSession(final Session session);
-    @Nullable Project getSelectedProject();
-    void setSelectedProject(final Project project);
-    @Nullable Task getSelectedTask();
-    void setSelectedTask(final Task task);
+    @Nullable SessionDTO getCurrentSession();
+    void setCurrentSession(final SessionDTO session);
+    @Nullable ProjectDTO getSelectedProject();
+    void setSelectedProject(final ProjectDTO project);
+    @Nullable TaskDTO getSelectedTask();
+    void setSelectedTask(final TaskDTO task);
 
 }

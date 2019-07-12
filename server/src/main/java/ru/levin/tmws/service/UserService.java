@@ -108,7 +108,7 @@ public final class UserService extends AbstractEntityService<UserDTO> implements
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
         @NotNull final IUserRepository repository = new UserRepository(entityManager);
         entityManager.getTransaction().begin();
-        @Nullable final UserDTO user = repository.findOneByLoginAndPassword(login, password);
+        @Nullable final UserDTO user = repository.findOneByLoginAndPassword(login, hash);
         entityManager.getTransaction().commit();
         entityManager.close();
         return user;

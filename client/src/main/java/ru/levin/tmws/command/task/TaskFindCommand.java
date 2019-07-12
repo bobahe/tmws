@@ -3,7 +3,7 @@ package ru.levin.tmws.command.task;
 import org.jetbrains.annotations.NotNull;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.ITaskEndpoint;
-import ru.levin.tmws.api.endpoint.Task;
+import ru.levin.tmws.api.endpoint.TaskDTO;
 import ru.levin.tmws.api.service.ITerminalService;
 import ru.levin.tmws.command.AbstractCommand;
 import ru.levin.tmws.exception.NoStatusException;
@@ -52,9 +52,9 @@ public final class TaskFindCommand extends AbstractCommand {
         terminalService.println(getTitle());
         terminalService.println("Enter name or description to find: ");
         @NotNull final String matcher = terminalService.getLine();
-        @NotNull final List<Task> taskList = taskEndpoint.getTaskByNameOrDescription(serviceLocator.getCurrentSession(), matcher);
+        @NotNull final List<TaskDTO> taskList = taskEndpoint.getTaskByNameOrDescription(serviceLocator.getCurrentSession(), matcher);
         for (int i = 0; i < taskList.size(); i++) {
-            @NotNull final Task task = taskList.get(i);
+            @NotNull final TaskDTO task = taskList.get(i);
             if (task.getStatus() == null) throw new NoStatusException();
             terminalService.println((i + 1) + ". " + task.getName());
             terminalService.println("\tDescription: " + task.getDescription());
@@ -69,7 +69,7 @@ public final class TaskFindCommand extends AbstractCommand {
                 terminalService.println("\tEnd date: not set");
             }
 
-            if (task.getProject() != null) terminalService.println("\tProject: " + task.getProject().getName());
+            terminalService.println("\tProject: " + task.getProjectId());
             terminalService.println("\tStatus: " + task.getStatus().value());
         }
     }

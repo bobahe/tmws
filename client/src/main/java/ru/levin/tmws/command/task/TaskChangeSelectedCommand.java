@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.ITaskEndpoint;
 import ru.levin.tmws.api.endpoint.Status;
-import ru.levin.tmws.api.endpoint.Task;
+import ru.levin.tmws.api.endpoint.TaskDTO;
 import ru.levin.tmws.api.service.ITerminalService;
 import ru.levin.tmws.command.AbstractCommand;
 import ru.levin.tmws.exception.NoSelectedTaskException;
@@ -70,7 +70,7 @@ public final class TaskChangeSelectedCommand extends AbstractCommand {
     public void execute() throws Exception {
         if (serviceLocator.getSelectedTask() == null) throw new NoSelectedTaskException();
         terminalService.println(getTitle());
-        @NotNull final Task task = serviceLocator.getSelectedTask();
+        @NotNull final TaskDTO task = serviceLocator.getSelectedTask();
         terminalService.println(NAME_PROMPT);
         task.setName(terminalService.getLine());
         terminalService.println(DESCRIPTION_PROMPT);

@@ -3,7 +3,7 @@ package ru.levin.tmws.command.project;
 import org.jetbrains.annotations.NotNull;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.IProjectEndpoint;
-import ru.levin.tmws.api.endpoint.Project;
+import ru.levin.tmws.api.endpoint.ProjectDTO;
 import ru.levin.tmws.api.service.ITerminalService;
 import ru.levin.tmws.command.AbstractCommand;
 import ru.levin.tmws.exception.NoStatusException;
@@ -50,7 +50,7 @@ public final class ProjectListCommand extends AbstractCommand {
 
     @Override
     public void execute() {
-        @NotNull final List<Project> projectList = projectEndpoint.getProjectAll(serviceLocator.getCurrentSession());
+        @NotNull final List<ProjectDTO> projectList = projectEndpoint.getProjectAll(serviceLocator.getCurrentSession());
         terminalService.println("Select option to sortTaskList list (1 by default):");
         terminalService.println("1. Saved order");
         terminalService.println("2. Start date");
@@ -59,7 +59,7 @@ public final class ProjectListCommand extends AbstractCommand {
         @NotNull final String orderType = terminalService.getLine();
         CommandUtil.sortProjectList(orderType, projectList);
         for (int i = 0; i < projectList.size(); i++) {
-            @NotNull final Project project = projectList.get(i);
+            @NotNull final ProjectDTO project = projectList.get(i);
             if (project.getStatus() == null) throw new NoStatusException();
             terminalService.println((i + 1) + ". " + project.getName());
             terminalService.println("\tDescription: " + project.getDescription());

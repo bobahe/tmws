@@ -8,12 +8,17 @@ import ru.levin.tmws.entity.Status;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "app_project")
 public class ProjectDTO extends AbstractHasOwnerDTO {
+
+    public ProjectDTO() {
+        this.id = UUID.randomUUID().toString();
+    }
 
     @Column
     @Nullable

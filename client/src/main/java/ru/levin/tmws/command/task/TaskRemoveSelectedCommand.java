@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.ITaskEndpoint;
-import ru.levin.tmws.api.endpoint.Task;
+import ru.levin.tmws.api.endpoint.TaskDTO;
 import ru.levin.tmws.api.service.ITerminalService;
 import ru.levin.tmws.command.AbstractCommand;
 import ru.levin.tmws.exception.NoSelectedTaskException;
@@ -48,7 +48,7 @@ public final class TaskRemoveSelectedCommand extends AbstractCommand {
 
     @Override
     public void execute() {
-        @Nullable final Task selectedTask = serviceLocator.getSelectedTask();
+        @Nullable final TaskDTO selectedTask = serviceLocator.getSelectedTask();
         if (selectedTask == null) throw new NoSelectedTaskException();
         taskEndpoint.removeTask(serviceLocator.getCurrentSession(), selectedTask);
         serviceLocator.setSelectedTask(null);
