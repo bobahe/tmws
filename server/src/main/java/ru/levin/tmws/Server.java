@@ -4,6 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import ru.levin.tmws.context.Bootstrap;
 import ru.levin.tmws.endpoint.*;
 
+import javax.enterprise.inject.se.SeContainerInitializer;
+
 public class Server {
 
     @NotNull
@@ -13,8 +15,9 @@ public class Server {
     };
 
     public static void main(String[] args) {
-        @NotNull final Bootstrap bootstrap = new Bootstrap();
-        bootstrap.init(endpoints);
+        SeContainerInitializer.newInstance()
+                .addPackages(Server.class).initialize()
+                .select(Bootstrap.class).get().init(endpoints);
     }
 
 }
