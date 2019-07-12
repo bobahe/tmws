@@ -2,15 +2,15 @@ package ru.levin.tmws.api.service;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.levin.tmws.entity.Project;
+import ru.levin.tmws.dto.ProjectDTO;
 
 import java.util.List;
 
-public interface IProjectService extends IEntityService<Project> {
+public interface IProjectService extends IEntityService<ProjectDTO> {
 
     void removeByUserId(@Nullable final String userId);
-    @Nullable Project findOneByIndex(@Nullable final String userId, final int index);
-    @NotNull  List<Project> findAllByUserId(@Nullable final String userId);
-    @NotNull List<Project> findAllByPartOfNameOrDescription(@Nullable final String partOfName);
+    @Nullable ProjectDTO findOneByIndex(@Nullable final String userId, final int index);
+    @NotNull  List<ProjectDTO> findAllByUserId(@Nullable final String userId);
+    @NotNull List<ProjectDTO> findAllByPartOfNameOrDescription(@Nullable final String partOfName);
 
 }

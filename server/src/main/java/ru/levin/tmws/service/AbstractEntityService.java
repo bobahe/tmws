@@ -3,12 +3,12 @@ package ru.levin.tmws.service;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.service.IEntityService;
-import ru.levin.tmws.entity.AbstractEntity;
+import ru.levin.tmws.dto.AbstractDTO;
 
 import javax.persistence.EntityManagerFactory;
 import java.util.List;
 
-public abstract class AbstractEntityService<T extends AbstractEntity>
+public abstract class AbstractEntityService<T extends AbstractDTO>
         extends AbstractService<T>
         implements IEntityService<T> {
 

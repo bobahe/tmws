@@ -2,11 +2,11 @@ package ru.levin.tmws.api.service;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.levin.tmws.entity.AbstractEntity;
+import ru.levin.tmws.dto.AbstractDTO;
 
 import java.util.List;
 
-public interface IEntityService<T extends AbstractEntity> extends IService<T> {
+public interface IEntityService<T extends AbstractDTO> extends IService<T> {
 
     @NotNull List<T> getAll();
     @Nullable T save(@Nullable T entity);

@@ -6,9 +6,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.service.ISessionService;
 import ru.levin.tmws.api.service.IUserService;
+import ru.levin.tmws.dto.SessionDTO;
+import ru.levin.tmws.dto.UserDTO;
 import ru.levin.tmws.entity.RoleType;
-import ru.levin.tmws.entity.Session;
-import ru.levin.tmws.entity.User;
 import ru.levin.tmws.exception.HashException;
 import ru.levin.tmws.exception.NullSessionException;
 import ru.levin.tmws.exception.SessionValidationException;
@@ -53,11 +53,11 @@ public class ServiceUtil {
     }
 
     @NotNull
-    public static Session checkSession(@Nullable final Session session, @NotNull final ISessionService service) {
+    public static SessionDTO checkSession(@Nullable final SessionDTO session, @NotNull final ISessionService service) {
         if (session == null) throw new NullSessionException();
         if (session.getSignature() == null || session.getSignature().isEmpty()) throw new SessionValidationException();
-        if (session.getUser() == null) throw new SessionValidationException();
-        @Nullable final Session serverSession = service.findById(session.getId());
+        if (session.getUserId() == null) throw new SessionValidationException();
+        @Nullable final SessionDTO serverSession = service.findById(session.getId());
         if (serverSession == null) throw new SessionValidationException();
         if (serverSession.getSignature() == null || serverSession.getSignature().isEmpty()) {
             throw new SessionValidationException();
@@ -68,7 +68,7 @@ public class ServiceUtil {
 
     public static boolean isAdmin(@Nullable final String userId, @NotNull final IUserService service) {
         if (userId == null) return false;
-        @Nullable final User user = service.findById(userId);
+        @Nullable final UserDTO user = service.findById(userId);
         return user != null && user.getRoleType() == RoleType.ADMIN;
     }
 

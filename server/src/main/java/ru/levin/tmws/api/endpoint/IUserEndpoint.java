@@ -1,8 +1,8 @@
 package ru.levin.tmws.api.endpoint;
 
 import org.jetbrains.annotations.Nullable;
-import ru.levin.tmws.entity.Session;
-import ru.levin.tmws.entity.User;
+import ru.levin.tmws.dto.SessionDTO;
+import ru.levin.tmws.dto.UserDTO;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -13,14 +13,14 @@ public interface IUserEndpoint extends IEndpoint {
 
     @WebMethod
     void changeUserPassword(
-            @WebParam(name = "ticket") @Nullable final Session session,
+            @WebParam(name = "ticket") @Nullable final SessionDTO session,
             @WebParam(name = "newPassword") @Nullable final String password
     );
 
     @WebMethod
     void changeProfile(
-            @WebParam(name = "ticket") @Nullable final Session session,
-            @WebParam(name = "user") @Nullable final User user
+            @WebParam(name = "ticket") @Nullable final SessionDTO session,
+            @WebParam(name = "user") @Nullable final UserDTO user
     );
 
     @WebMethod

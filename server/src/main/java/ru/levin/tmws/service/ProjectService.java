@@ -2,88 +2,100 @@ package ru.levin.tmws.service;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.levin.tmws.api.repository.IProjectRepository;
 import ru.levin.tmws.api.service.IProjectService;
-import ru.levin.tmws.entity.Project;
+import ru.levin.tmws.dto.ProjectDTO;
+import ru.levin.tmws.repository.ProjectRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class ProjectService extends AbstractEntityService<Project> implements IProjectService {
+public final class ProjectService extends AbstractEntityService<ProjectDTO> implements IProjectService {
 
-    @NotNull final List<Project> list = new ArrayList<>();
+    @NotNull final List<ProjectDTO> list = new ArrayList<>();
 
     public ProjectService(@NotNull final EntityManagerFactory entityManagerFactory) {
         super(entityManagerFactory);
     }
 
     @Override
-    public @NotNull List<Project> getAll() {
+    public @NotNull List<ProjectDTO> getAll() {
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
+        @NotNull final IProjectRepository repository = new ProjectRepository(entityManager);
         entityManager.getTransaction().begin();
-        @NotNull final List<Project> projects = entityManager
-                .createQuery("from Project", Project.class)
-                .getResultList();
+        @NotNull final List<ProjectDTO> result = repository.findAll();
         entityManager.getTransaction().commit();
-        return projects;
+        entityManager.close();
+        return result;
     }
 
     @Nullable
     @Override
-    public Project save(final @Nullable Project entity) {
+    public ProjectDTO save(final @Nullable ProjectDTO entity) {
         if (entity == null) return null;
         if (entity.getName() == null || entity.getName().isEmpty()) return null;
 
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
+        @NotNull final IProjectRepository repository = new ProjectRepository(entityManager);
         entityManager.getTransaction().begin();
-        entityManager.persist(entity);
+        repository.persist(entity);
         entityManager.getTransaction().commit();
+        entityManager.close();
         return entity;
     }
 
     @Nullable
     @Override
-    public Project update(final @Nullable Project entity) {
+    public ProjectDTO update(final @Nullable ProjectDTO entity) {
         if (entity == null) return null;
         if (entity.getId() == null || entity.getId().isEmpty()) return null;
         if (entity.getName() == null || entity.getName().isEmpty()) return null;
 
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
+        @NotNull final IProjectRepository repository = new ProjectRepository(entityManager);
         entityManager.getTransaction().begin();
-        entityManager.merge(entity);
+        repository.merge(entity);
         entityManager.getTransaction().commit();
+        entityManager.close();
         return entity;
     }
 
     @Override
-    public boolean remove(final @Nullable Project entity) {
+    public boolean remove(final @Nullable ProjectDTO entity) {
         if (entity == null) return false;
-
+        if (entity.getId() == null || entity.getId().isEmpty()) return false;
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
+        @NotNull final IProjectRepository repository = new ProjectRepository(entityManager);
         entityManager.getTransaction().begin();
-        entityManager.remove(entity);
+        repository.remove(entity);
         entityManager.getTransaction().commit();
+        entityManager.close();
         return true;
     }
 
     @Override
     public boolean removeAll() {
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
+        @NotNull final IProjectRepository repository = new ProjectRepository(entityManager);
         entityManager.getTransaction().begin();
-        entityManager.createQuery("delete from Project").executeUpdate();
+        repository.removeAll();
         entityManager.getTransaction().commit();
+        entityManager.close();
         return true;
     }
 
     @Nullable
     @Override
-    public Project findOneById(final @Nullable String id) {
+    public ProjectDTO findOneById(final @Nullable String id) {
         if (id == null) return null;
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
+        @NotNull final IProjectRepository repository = new ProjectRepository(entityManager);
         entityManager.getTransaction().begin();
-        @Nullable final Project project = entityManager.find(Project.class, id);
+        @Nullable final ProjectDTO project = repository.findOne(id);
         entityManager.getTransaction().commit();
+        entityManager.close();
         return project;
     }
 
@@ -91,42 +103,42 @@ public final class ProjectService extends AbstractEntityService<Project> impleme
     public void removeByUserId(@Nullable final String userId) {
         if (userId == null) return;
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
+        @NotNull final IProjectRepository repository = new ProjectRepository(entityManager);
         entityManager.getTransaction().begin();
-        entityManager.createQuery("delete from Project p where p.user.id = '" + userId + "'").executeUpdate();
+        repository.removeByUserId(userId);
         entityManager.getTransaction().commit();
+        entityManager.close();
     }
 
     @Override
     @Nullable
-    public Project findOneByIndex(@Nullable final String userId, int index) throws IndexOutOfBoundsException {
+    public ProjectDTO findOneByIndex(@Nullable final String userId, int index) throws IndexOutOfBoundsException {
         if (userId == null) return null;
-        return getAll().get(index - 1);
+        return findAllByUserId(userId).get(index - 1);
     }
 
     @Override
     @NotNull
-    public List<Project> findAllByUserId(@Nullable final String userId) {
+    public List<ProjectDTO> findAllByUserId(@Nullable final String userId) {
         if (userId == null) return list;
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
+        @NotNull final IProjectRepository repository = new ProjectRepository(entityManager);
         entityManager.getTransaction().begin();
-        @NotNull final List<Project> projects = entityManager
-                .createQuery("from Project p where p.user.id = '" + userId + "'", Project.class).getResultList();
+        @NotNull final List<ProjectDTO> projects = repository.findAllByUserId(userId);
         entityManager.getTransaction().commit();
+        entityManager.close();
         return projects;
     }
 
     @Override
-    public @NotNull List<Project> findAllByPartOfNameOrDescription(final @Nullable String partOfName) {
+    public @NotNull List<ProjectDTO> findAllByPartOfNameOrDescription(final @Nullable String partOfName) {
         if (partOfName == null) return list;
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
+        @NotNull final IProjectRepository repository = new ProjectRepository(entityManager);
         entityManager.getTransaction().begin();
-        @NotNull final List<Project> projects = entityManager
-                .createQuery(
-                        "from Project p where p.name like '%" + partOfName + "%' or p.description like '%" + partOfName + "%'",
-                        Project.class
-                )
-                .getResultList();
+        @NotNull final List<ProjectDTO> projects = repository.findAllByPartOfNameOrDescription(partOfName);
         entityManager.getTransaction().commit();
+        entityManager.close();
         return projects;
     }
 

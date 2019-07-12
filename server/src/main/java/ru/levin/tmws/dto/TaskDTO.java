@@ -1,5 +1,7 @@
 package ru.levin.tmws.dto;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.entity.Status;
@@ -7,6 +9,8 @@ import ru.levin.tmws.entity.Status;
 import javax.persistence.*;
 import java.util.Date;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "app_task")
 public class TaskDTO extends AbstractHasOwnerDTO {

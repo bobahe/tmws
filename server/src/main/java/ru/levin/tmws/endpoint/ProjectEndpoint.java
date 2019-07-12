@@ -4,9 +4,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.IProjectEndpoint;
-import ru.levin.tmws.entity.Project;
-import ru.levin.tmws.entity.Session;
-import ru.levin.tmws.entity.Task;
+import ru.levin.tmws.dto.ProjectDTO;
+import ru.levin.tmws.dto.SessionDTO;
+import ru.levin.tmws.dto.TaskDTO;
 import ru.levin.tmws.exception.*;
 import ru.levin.tmws.util.ServiceUtil;
 
@@ -27,18 +27,18 @@ public class ProjectEndpoint implements IProjectEndpoint {
     }
 
     @Override
-    public @Nullable Project createProject(final @Nullable Session session, final @Nullable Project project) {
+    public @Nullable ProjectDTO createProject(final @Nullable SessionDTO session, final @Nullable ProjectDTO project) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
         if (project == null) throw new SaveException();
         if (project.getName() == null || project.getName().isEmpty()) throw new SaveException();
-        if (session.getUser() == null) throw new SessionValidationException();
-        project.setUser(session.getUser());
+        if (session.getUserId() == null) throw new SessionValidationException();
+        project.setUserId(session.getUserId());
         return serviceLocator.getProjectService().save(project);
     }
 
     @Override
-    public void updateProject(final @Nullable Session session, final @Nullable Project project) {
+    public void updateProject(final @Nullable SessionDTO session, final @Nullable ProjectDTO project) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
         if (project == null) throw new UpdateException();
@@ -47,7 +47,7 @@ public class ProjectEndpoint implements IProjectEndpoint {
     }
 
     @Override
-    public void removeProject(final @Nullable Session session, final @Nullable Project project) {
+    public void removeProject(final @Nullable SessionDTO session, final @Nullable ProjectDTO project) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
         if (project == null) throw new DeleteException();
@@ -56,49 +56,48 @@ public class ProjectEndpoint implements IProjectEndpoint {
     }
 
     @Override
-    public void removeProjectAll(final @Nullable Session session) {
+    public void removeProjectAll(final @Nullable SessionDTO session) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        if (session.getUser() == null) throw new InternalServiceException();
-        serviceLocator.getProjectService().removeByUserId(session.getUser().getId());
+        if (session.getUserId() == null) throw new InternalServiceException();
+        serviceLocator.getProjectService().removeByUserId(session.getUserId());
     }
 
     @Override
-    public @NotNull List<Project> getProjectAll(final @Nullable Session session) {
+    public @NotNull List<ProjectDTO> getProjectAll(final @Nullable SessionDTO session) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        if (session.getUser() == null) throw new InternalServiceException();
-        @NotNull final List<Project> allByUserId = serviceLocator.getProjectService().findAllByUserId(session.getUser().getId());
+        if (session.getUserId() == null) throw new InternalServiceException();
+        @NotNull final List<ProjectDTO> allByUserId = serviceLocator.getProjectService().findAllByUserId(session.getUserId());
         return allByUserId;
     }
 
     @Override
-    public @NotNull List<Task> getProjectTasks(final @Nullable Session session, final @Nullable Project project) {
+    public @NotNull List<TaskDTO> getProjectTasks(final @Nullable SessionDTO session, final @Nullable ProjectDTO project) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
         if (project == null) throw new NoSelectedProjectException();
         if (project.getId() == null || project.getId().isEmpty()) throw new NoSelectedProjectException();
-        if (session.getUser() == null) throw new SessionValidationException();
-        if (session.getUser().getId() == null) throw new InternalServiceException();
-        if (project.getUser() == null || !session.getUser().getId().equals(project.getUser().getId())) {
+        if (session.getUserId() == null) throw new SessionValidationException();
+        if (project.getUserId() == null || !session.getUserId().equals(project.getUserId())) {
             throw new AccessForbiddenException();
         }
-        return serviceLocator.getTaskService().findAllByUserIdAndProjectId(project.getUser().getId(), project.getId());
+        return serviceLocator.getTaskService().findAllByUserIdAndProjectId(project.getUserId(), project.getId());
     }
 
     @Override
-    public @Nullable Project getProjectById(final @Nullable Session session, final int projectId) {
+    public @Nullable ProjectDTO getProjectById(final @Nullable SessionDTO session, final int projectId) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        if (session.getUser() == null) throw new SessionValidationException();
-        return serviceLocator.getProjectService().findOneByIndex(session.getUser().getId(), projectId);
+        if (session.getUserId() == null) throw new SessionValidationException();
+        return serviceLocator.getProjectService().findOneByIndex(session.getUserId(), projectId);
     }
 
     @Override
-    public @NotNull List<Project> getProjectByNameOrDescription(final @Nullable Session session, final @Nullable String matcher) {
+    public @NotNull List<ProjectDTO> getProjectByNameOrDescription(final @Nullable SessionDTO session, final @Nullable String matcher) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        if (session.getUser() == null) throw new SessionValidationException();
+        if (session.getUserId() == null) throw new SessionValidationException();
         if (matcher == null) throw new InternalServiceException();
         return serviceLocator.getProjectService().findAllByPartOfNameOrDescription(matcher);
     }

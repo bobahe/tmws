@@ -1,11 +1,15 @@
 package ru.levin.tmws.dto;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.entity.RoleType;
 
 import javax.persistence.*;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "app_user")
 public class UserDTO extends AbstractDTO {

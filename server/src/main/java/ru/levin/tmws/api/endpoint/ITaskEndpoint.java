@@ -2,8 +2,8 @@ package ru.levin.tmws.api.endpoint;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.levin.tmws.entity.Session;
-import ru.levin.tmws.entity.Task;
+import ru.levin.tmws.dto.SessionDTO;
+import ru.levin.tmws.dto.TaskDTO;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -15,48 +15,48 @@ public interface ITaskEndpoint extends IEndpoint {
 
     @Nullable
     @WebMethod
-    Task createTask(
-            @WebParam(name = "ticket") @Nullable final Session session,
-            @WebParam(name = "task") @Nullable final Task task
+    TaskDTO createTask(
+            @WebParam(name = "ticket") @Nullable final SessionDTO session,
+            @WebParam(name = "task") @Nullable final TaskDTO task
     );
 
     @WebMethod
     void addTaskToProject(
-            @WebParam(name = "ticket") @Nullable final Session session,
+            @WebParam(name = "ticket") @Nullable final SessionDTO session,
             @WebParam(name = "taskId") @Nullable final String taskId,
             @WebParam(name = "projectId") @Nullable final String projectId
     );
 
     @WebMethod
     void updateTask(
-            @WebParam(name = "ticket") @Nullable final Session session,
-            @WebParam(name = "task") @Nullable final Task task
+            @WebParam(name = "ticket") @Nullable final SessionDTO session,
+            @WebParam(name = "task") @Nullable final TaskDTO task
     );
 
     @WebMethod
     void removeTask(
-            @WebParam(name = "ticket") @Nullable final Session session,
-            @WebParam(name = "task") @Nullable final Task task
+            @WebParam(name = "ticket") @Nullable final SessionDTO session,
+            @WebParam(name = "task") @Nullable final TaskDTO task
     );
 
     @WebMethod
-    void removeTaskAll(@WebParam(name = "ticket") @Nullable final Session session);
+    void removeTaskAll(@WebParam(name = "ticket") @Nullable final SessionDTO session);
 
     @NotNull
     @WebMethod
-    List<Task> getTaskAll(@WebParam(name = "ticket") @Nullable final Session session);
+    List<TaskDTO> getTaskAll(@WebParam(name = "ticket") @Nullable final SessionDTO session);
 
     @Nullable
     @WebMethod
-    Task getTaskById(
-            @WebParam(name = "ticket") @Nullable final Session session,
+    TaskDTO getTaskById(
+            @WebParam(name = "ticket") @Nullable final SessionDTO session,
             @WebParam(name = "taskId") final int taskId
     );
 
     @NotNull
     @WebMethod
-    List<Task> getTaskByNameOrDescription(
-            @WebParam(name = "ticket") @Nullable final Session session,
+    List<TaskDTO> getTaskByNameOrDescription(
+            @WebParam(name = "ticket") @Nullable final SessionDTO session,
             @WebParam(name = "matcher") @Nullable final String matcher
     );
 

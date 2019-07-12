@@ -4,8 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.ISessionEndpoint;
-import ru.levin.tmws.entity.Session;
-import ru.levin.tmws.entity.User;
+import ru.levin.tmws.dto.SessionDTO;
+import ru.levin.tmws.dto.UserDTO;
 import ru.levin.tmws.exception.AccessForbiddenException;
 import ru.levin.tmws.exception.AuthorizationException;
 import ru.levin.tmws.exception.InternalServiceException;
@@ -28,53 +28,53 @@ public class SessionEndpoint implements ISessionEndpoint {
     }
 
     @Override
-    public @Nullable Session openSession(final @Nullable String login, final @Nullable String password) {
+    public @Nullable SessionDTO openSession(final @Nullable String login, final @Nullable String password) {
         if (serviceLocator == null) throw new InternalServiceException();
         if (login == null || login.isEmpty()) throw new AuthorizationException();
         if (password == null || password.isEmpty()) throw new AuthorizationException();
 
-        @Nullable final User user = serviceLocator.getUserService().getUserByLoginAndPassword(login, password);
+        @Nullable final UserDTO user = serviceLocator.getUserService().getUserByLoginAndPassword(login, password);
         if (user == null || user.getId() == null) throw new AuthorizationException();
-        @NotNull final List<Session> sessions = serviceLocator.getSessionService().findAllByUserId(user.getId());
+        @NotNull final List<SessionDTO> sessions = serviceLocator.getSessionService().findAllByUserId(user.getId());
         if (sessions.size() > 0) return sessions.get(0);
-        @NotNull final Session session = new Session();
-        session.setUser(user);
-        @Nullable final Session savedSession = serviceLocator.getSessionService().save(session);
+        @NotNull final SessionDTO session = new SessionDTO();
+        session.setUserId(user.getId());
+        @Nullable final SessionDTO savedSession = serviceLocator.getSessionService().save(session);
         return savedSession;
     }
 
     @Override
-    public @Nullable User getUser(final @Nullable Session session) {
+    public @Nullable UserDTO getUser(final @Nullable SessionDTO session) {
         if (serviceLocator == null) throw new InternalServiceException();
-        @NotNull final Session serverSession = ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        if (serverSession.getUser() == null) throw new InternalServiceException();
-        @Nullable final User user = serviceLocator.getUserService().findById(serverSession.getUser().getId());
+        @NotNull final SessionDTO serverSession = ServiceUtil.checkSession(session, serviceLocator.getSessionService());
+        if (serverSession.getUserId() == null) throw new InternalServiceException();
+        @Nullable final UserDTO user = serviceLocator.getUserService().findById(serverSession.getUserId());
         return user;
     }
 
     @Override
-    public @NotNull List<Session> getSessionList(final @Nullable Session session) {
+    public @NotNull List<SessionDTO> getSessionList(final @Nullable SessionDTO session) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        if (session.getUser() == null) throw new InternalServiceException();
-        final boolean isAdmin = ServiceUtil.isAdmin(session.getUser().getId(), serviceLocator.getUserService());
+        if (session.getUserId() == null) throw new InternalServiceException();
+        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), serviceLocator.getUserService());
         if (!isAdmin) throw new AccessForbiddenException();
         return serviceLocator.getSessionService().getAll();
     }
 
     @Override
-    public void closeSession(final @Nullable Session session) {
+    public void closeSession(final @Nullable SessionDTO session) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
         serviceLocator.getSessionService().remove(session);
     }
 
     @Override
-    public void closeSessionAll(final @Nullable Session session) {
+    public void closeSessionAll(final @Nullable SessionDTO session) {
         if (serviceLocator == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, serviceLocator.getSessionService());
-        if (session.getUser() == null) throw new InternalServiceException();
-        final boolean isAdmin = ServiceUtil.isAdmin(session.getUser().getId(), serviceLocator.getUserService());
+        if (session.getUserId() == null) throw new InternalServiceException();
+        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), serviceLocator.getUserService());
         if (!isAdmin) throw new AccessForbiddenException();
         serviceLocator.getSessionService().removeAll();
     }

@@ -1,5 +1,7 @@
 package ru.levin.tmws.dto;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -7,6 +9,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "app_session")
 public class SessionDTO extends AbstractHasOwnerDTO {
