@@ -11,6 +11,10 @@ import org.jetbrains.annotations.NotNull;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.IEndpoint;
 import ru.levin.tmws.api.service.*;
+import ru.levin.tmws.dto.ProjectDTO;
+import ru.levin.tmws.dto.SessionDTO;
+import ru.levin.tmws.dto.TaskDTO;
+import ru.levin.tmws.dto.UserDTO;
 import ru.levin.tmws.entity.*;
 import ru.levin.tmws.service.*;
 
@@ -107,6 +111,10 @@ public final class Bootstrap implements IServiceLocator {
         sources.addAnnotatedClass(Project.class);
         sources.addAnnotatedClass(User.class);
         sources.addAnnotatedClass(Session.class);
+        sources.addAnnotatedClass(TaskDTO.class);
+        sources.addAnnotatedClass(ProjectDTO.class);
+        sources.addAnnotatedClass(UserDTO.class);
+        sources.addAnnotatedClass(SessionDTO.class);
         final Metadata metadata = sources.getMetadataBuilder().build();
         return metadata.getSessionFactoryBuilder().build();
     }

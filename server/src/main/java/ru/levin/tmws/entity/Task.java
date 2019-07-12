@@ -3,8 +3,6 @@ package ru.levin.tmws.entity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.IContainsDatesAndStatus;
@@ -37,7 +35,6 @@ public final class Task extends AbstractHasOwnerEntity implements IContainsDates
     private String description;
 
     @ManyToOne(cascade = {CascadeType.REMOVE})
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @Nullable
     private Project project;
 
