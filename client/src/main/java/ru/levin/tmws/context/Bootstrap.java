@@ -1,7 +1,6 @@
 package ru.levin.tmws.context;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,44 +10,58 @@ import ru.levin.tmws.api.endpoint.SessionDTO;
 import ru.levin.tmws.api.endpoint.TaskDTO;
 import ru.levin.tmws.api.service.ITerminalService;
 import ru.levin.tmws.command.AbstractCommand;
+import ru.levin.tmws.command.persist.*;
+import ru.levin.tmws.command.project.*;
+import ru.levin.tmws.command.system.AboutCommand;
+import ru.levin.tmws.command.system.HelpCommand;
+import ru.levin.tmws.command.system.SessionCloseAllCommand;
+import ru.levin.tmws.command.task.*;
+import ru.levin.tmws.command.user.*;
 import ru.levin.tmws.endpoint.*;
 import ru.levin.tmws.exception.CommandNotFoundException;
-import ru.levin.tmws.service.TerminalService;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import java.lang.reflect.Constructor;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@NoArgsConstructor
-public final class Bootstrap implements IServiceLocator {
+@ApplicationScoped
+public class Bootstrap implements IServiceLocator {
 
     @NotNull
     @Getter
     private final Map<String, AbstractCommand> commands = new LinkedHashMap<>();
 
-    @NotNull
+    @Nullable
     @Getter
-    private final ITerminalService terminalService = new TerminalService();
+    @Inject
+    private ITerminalService terminalService;
 
-    @NotNull
+    @Nullable
     @Getter
-    private final AdminEndpointService adminService = new AdminEndpointService();
+    @Inject
+    private AdminEndpointService adminService;
 
-    @NotNull
+    @Nullable
     @Getter
-    private UserEndpointService userService = new UserEndpointService();
+    @Inject
+    private ProjectEndpointService projectService;
 
-    @NotNull
+    @Nullable
     @Getter
-    private ProjectEndpointService projectService = new ProjectEndpointService();
+    @Inject
+    private SessionEndpointService sessionService;
 
-    @NotNull
+    @Nullable
     @Getter
-    private TaskEndpointService taskService = new TaskEndpointService();
+    @Inject
+    private TaskEndpointService taskService;
 
-    @NotNull
+    @Nullable
     @Getter
-    private SessionEndpointService sessionService = new SessionEndpointService();
+    @Inject
+    private UserEndpointService userService;
 
     @Nullable
     @Getter
@@ -65,18 +78,34 @@ public final class Bootstrap implements IServiceLocator {
     @Setter
     private TaskDTO selectedTask;
 
-    public void init(@NotNull final Class[] commands) {
-        registerCommands(commands);
+    @NotNull
+    private static final Class[] COMMANDS = {
+            HelpCommand.class, UserLoginCommand.class, UserRegisterCommand.class,
+            AboutCommand.class, ProjectListCommand.class, ProjectCreateCommand.class,
+            ProjectFindCommand.class, ProjectSelectCommand.class, ProjectRemoveAllCommand.class,
+            ProjectChangeSelectedCommand.class, ProjectRemoveSelectedCommand.class, TaskProjectTaskListCommand.class,
+            TaskRemoveAllCommand.class, TaskCreateCommand.class, TaskFindCommand.class, TaskSelectCommand.class,
+            TaskListCommand.class, TaskChangeSelectedCommand.class, TaskRemoveSelectedCommand.class,
+            TaskJoinCommand.class, UserLogoutCommand.class, UserChangePasswordCommand.class,
+            UserShowProfileCommand.class, UserEditProfileCommand.class, SerializedSaveCommand.class,
+            SerializedLoadCommand.class, JAXBXmlSaveCommand.class, JAXBXmlLoadCommand.class,
+            JAXBJsonSaveCommand.class, JAXBJsonLoadCommand.class, FasterXmlSaveCommand.class,
+            FasterXmlLoadCommand.class, FasterJsonSaveCommand.class, FasterJsonLoadCommand.class,
+            SessionCloseAllCommand.class
+    };
+
+    public void init() {
+        registerCommands();
         process();
     }
 
-    private void registerCommands(@NotNull final Class[] commands) {
-        for (final Class<?> cmdClass : commands) {
+    private void registerCommands() {
+        if (terminalService == null) return;
+        for (final Class<?> cmdClass : COMMANDS) {
             if (cmdClass.getSuperclass().equals(AbstractCommand.class)) {
                 try {
-                    @NotNull final Constructor<?> constructor = cmdClass.getConstructor(IServiceLocator.class);
-                    AbstractCommand command =
-                            ((AbstractCommand) constructor.newInstance(this));
+                    Constructor<?> constructor = cmdClass.getConstructor(IServiceLocator.class);
+                    AbstractCommand command = (AbstractCommand) constructor.newInstance(this);
                     this.commands.put(command.getName(), command);
                 } catch (Exception e) {
                     terminalService.printerr(e.getMessage());
@@ -86,6 +115,7 @@ public final class Bootstrap implements IServiceLocator {
     }
 
     private void process() {
+        if (terminalService == null) return;
         terminalService.println("*** WELCOME TO TASK MANAGER ***");
         @NotNull String command = terminalService.getLine();
 
@@ -100,8 +130,8 @@ public final class Bootstrap implements IServiceLocator {
     }
 
     private void invokeCommand(String commandName) {
+        if (terminalService == null) return;
         @Nullable final AbstractCommand command = commands.get(commandName);
-
         try {
             if (command == null) throw new CommandNotFoundException();
             command.execute();

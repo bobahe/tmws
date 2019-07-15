@@ -1,6 +1,5 @@
 package ru.levin.tmws.context;
 
-import lombok.NoArgsConstructor;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
@@ -25,7 +24,6 @@ import javax.xml.ws.Endpoint;
 import java.util.HashMap;
 import java.util.Map;
 
-@NoArgsConstructor
 @ApplicationScoped
 public class Bootstrap {
 

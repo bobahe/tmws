@@ -16,10 +16,10 @@ public interface IServiceLocator {
     @NotNull Map<String, AbstractCommand> getCommands();
     @NotNull ITerminalService getTerminalService();
     @NotNull AdminEndpointService getAdminService();
-    @NotNull UserEndpointService getUserService();
     @NotNull ProjectEndpointService getProjectService();
-    @NotNull TaskEndpointService getTaskService();
     @NotNull SessionEndpointService getSessionService();
+    @NotNull TaskEndpointService getTaskService();
+    @NotNull UserEndpointService getUserService();
     @Nullable SessionDTO getCurrentSession();
     void setCurrentSession(final SessionDTO session);
     @Nullable ProjectDTO getSelectedProject();

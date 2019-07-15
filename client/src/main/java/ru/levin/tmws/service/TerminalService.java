@@ -4,9 +4,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.service.ITerminalService;
 
+import javax.enterprise.context.ApplicationScoped;
 import java.io.InputStreamReader;
 import java.util.Scanner;
 
+@ApplicationScoped
 public class TerminalService implements ITerminalService {
 
     @NotNull
