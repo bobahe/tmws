@@ -5,9 +5,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.service.IPropertyService;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import java.io.FileInputStream;
 import java.util.Properties;
 
+@ApplicationScoped
 public class PropertyService implements IPropertyService {
 
     @NotNull
@@ -34,6 +37,7 @@ public class PropertyService implements IPropertyService {
     }
 
     @SneakyThrows
+    @PostConstruct
     public void init() {
         try (FileInputStream in = new FileInputStream("db.properties")) {
             props.load(in);

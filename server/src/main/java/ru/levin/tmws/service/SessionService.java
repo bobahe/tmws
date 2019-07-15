@@ -5,24 +5,29 @@ import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.repository.ISessionRepository;
 import ru.levin.tmws.api.service.ISessionService;
 import ru.levin.tmws.dto.SessionDTO;
+import ru.levin.tmws.exception.InternalServiceException;
 import ru.levin.tmws.repository.SessionRepository;
 import ru.levin.tmws.util.ServiceUtil;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class SessionService extends AbstractEntityService<SessionDTO> implements ISessionService {
+@ApplicationScoped
+public class SessionService extends AbstractEntityService<SessionDTO> implements ISessionService {
 
     @NotNull private final List<SessionDTO> list = new ArrayList<>();
 
-    public SessionService(@NotNull final EntityManagerFactory entityManagerFactory) {
-        super(entityManagerFactory);
-    }
+    @Nullable
+    @Inject
+    private EntityManagerFactory entityManagerFactory;
 
     @Override
     public @NotNull List<SessionDTO> getAll() {
+        if (entityManagerFactory == null) throw new InternalServiceException();
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
         @NotNull final ISessionRepository repository = new SessionRepository(entityManager);
         entityManager.getTransaction().begin();
@@ -35,6 +40,7 @@ public final class SessionService extends AbstractEntityService<SessionDTO> impl
     @Override
     @NotNull
     public List<SessionDTO> findAllByUserId(@Nullable final String userId) {
+        if (entityManagerFactory == null) throw new InternalServiceException();
         if (userId == null) return list;
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
         @NotNull final ISessionRepository repository = new SessionRepository(entityManager);
@@ -53,6 +59,7 @@ public final class SessionService extends AbstractEntityService<SessionDTO> impl
 
     @Override
     public void removeByUserId(@Nullable final String userId) {
+        if (entityManagerFactory == null) throw new InternalServiceException();
         if (userId == null) return;
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
         @NotNull final ISessionRepository repository = new SessionRepository(entityManager);
@@ -65,6 +72,7 @@ public final class SessionService extends AbstractEntityService<SessionDTO> impl
     @Override
     @Nullable
     public SessionDTO save(@Nullable final SessionDTO entity) {
+        if (entityManagerFactory == null) throw new InternalServiceException();
         if (entity == null) return null;
         entity.setSignature(ServiceUtil.sign(entity, "123", 5));
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
@@ -79,6 +87,7 @@ public final class SessionService extends AbstractEntityService<SessionDTO> impl
     @Override
     @Nullable
     public SessionDTO update(@Nullable final SessionDTO entity) {
+        if (entityManagerFactory == null) throw new InternalServiceException();
         if (entity == null) return null;
         if (entity.getId() == null || entity.getId().isEmpty()) return null;
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
@@ -92,6 +101,7 @@ public final class SessionService extends AbstractEntityService<SessionDTO> impl
 
     @Override
     public boolean remove(final @Nullable SessionDTO entity) {
+        if (entityManagerFactory == null) throw new InternalServiceException();
         if (entity == null) return false;
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
         @NotNull final ISessionRepository repository = new SessionRepository(entityManager);
@@ -104,6 +114,7 @@ public final class SessionService extends AbstractEntityService<SessionDTO> impl
 
     @Override
     public boolean removeAll() {
+        if (entityManagerFactory == null) throw new InternalServiceException();
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
         @NotNull final ISessionRepository repository = new SessionRepository(entityManager);
         entityManager.getTransaction().begin();
@@ -116,6 +127,7 @@ public final class SessionService extends AbstractEntityService<SessionDTO> impl
     @Nullable
     @Override
     public SessionDTO findOneById(final @Nullable String id) {
+        if (entityManagerFactory == null) throw new InternalServiceException();
         if (id == null) return null;
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
         @NotNull final ISessionRepository repository = new SessionRepository(entityManager);

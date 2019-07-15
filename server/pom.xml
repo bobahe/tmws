@@ -65,7 +65,7 @@
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>../lib/</classpathPrefix>
-                            <mainClass>ru.levin.tmws.Server</mainClass>
+                            <mainClass>ru.levin.tmws.ServerApp</mainClass>
                         </manifest>
                         <manifestEntries>
                             <Build-Developer>Developer: ${developer.name}</Build-Developer>

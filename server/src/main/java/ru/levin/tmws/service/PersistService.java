@@ -6,12 +6,15 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.eclipse.persistence.jaxb.JAXBContextProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.service.IPersistService;
+import ru.levin.tmws.api.service.IProjectService;
+import ru.levin.tmws.api.service.ITaskService;
 import ru.levin.tmws.dto.Domain;
 import ru.levin.tmws.exception.DeserializeException;
 import ru.levin.tmws.exception.SerializeException;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Marshaller;
@@ -22,15 +25,24 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
+@ApplicationScoped
 public class PersistService implements IPersistService {
+
+    @Inject
+    @Nullable
+    private transient IProjectService projectService;
+
+    @Inject
+    @Nullable
+    private transient ITaskService taskService;
 
     @NotNull
     private static final String FILENAME = "data.";
 
     @Override
-    public void serialize(@NotNull IServiceLocator serviceLocator) {
+    public void serialize() {
         @NotNull final Domain domain = new Domain();
-        domain.initFromInternalStorage(serviceLocator);
+        domain.initFromInternalStorage();
         try (FileOutputStream dataFile = new FileOutputStream(FILENAME + "bin");
              ObjectOutputStream objectOutputStream = new ObjectOutputStream(dataFile)) {
             objectOutputStream.writeObject(domain);
@@ -41,7 +53,8 @@ public class PersistService implements IPersistService {
     }
 
     @Override
-    public void deserialize(@NotNull IServiceLocator serviceLocator) {
+    public void deserialize() {
+        if (projectService == null || taskService == null) throw new DeserializeException();
         @Nullable Domain domain;
         try (FileInputStream dataFile = new FileInputStream(FILENAME + "bin");
              ObjectInputStream objectInputStream = new ObjectInputStream(dataFile)) {
@@ -50,14 +63,14 @@ public class PersistService implements IPersistService {
             throw new DeserializeException();
         }
 
-        domain.getProjects().forEach(project -> serviceLocator.getProjectService().save(project));
-        domain.getTasks().forEach(task -> serviceLocator.getTaskService().save(task));
+        domain.getProjects().forEach(project -> projectService.save(project));
+        domain.getTasks().forEach(task -> taskService.save(task));
     }
 
     @Override
-    public void saveFxmlXml(@NotNull IServiceLocator serviceLocator) {
+    public void saveFxmlXml() {
         @NotNull final Domain domain = new Domain();
-        domain.initFromInternalStorage(serviceLocator);
+        domain.initFromInternalStorage();
 
         try {
             @NotNull final XmlMapper mapper = new XmlMapper();
@@ -69,9 +82,9 @@ public class PersistService implements IPersistService {
     }
 
     @Override
-    public void saveFxmlJson(@NotNull IServiceLocator serviceLocator) {
+    public void saveFxmlJson() {
         @NotNull final Domain domain = new Domain();
-        domain.initFromInternalStorage(serviceLocator);
+        domain.initFromInternalStorage();
 
         try {
             @NotNull final ObjectMapper mapper = new ObjectMapper();
@@ -83,12 +96,13 @@ public class PersistService implements IPersistService {
     }
 
     @Override
-    public void loadFxmlXml(@NotNull IServiceLocator serviceLocator) {
+    public void loadFxmlXml() {
+        if (projectService == null || taskService == null) throw new DeserializeException();
         try {
             @NotNull final XmlMapper mapper = new XmlMapper();
             @NotNull final Domain domain = mapper.readValue(new File(FILENAME + "fxml.xml"), Domain.class);
-            if (domain.getProjects() != null) domain.getProjects().forEach(project -> serviceLocator.getProjectService().save(project));
-            if (domain.getTasks() != null) domain.getTasks().forEach(task -> serviceLocator.getTaskService().save(task));
+            domain.getProjects().forEach(project -> projectService.save(project));
+            domain.getTasks().forEach(task -> taskService.save(task));
         } catch (Exception e) {
             e.printStackTrace();
             throw new DeserializeException();
@@ -96,21 +110,22 @@ public class PersistService implements IPersistService {
     }
 
     @Override
-    public void loadFxmlJson(@NotNull IServiceLocator serviceLocator) {
+    public void loadFxmlJson() {
+        if (projectService == null || taskService == null) throw new DeserializeException();
         try {
             @NotNull final ObjectMapper mapper = new ObjectMapper();
             @NotNull final Domain domain = mapper.readValue(new File(FILENAME + "fxml.json"), Domain.class);
-            domain.getProjects().forEach(project -> serviceLocator.getProjectService().save(project));
-            domain.getTasks().forEach(task -> serviceLocator.getTaskService().save(task));
+            domain.getProjects().forEach(project -> projectService.save(project));
+            domain.getTasks().forEach(task -> taskService.save(task));
         } catch (Exception e) {
             throw new DeserializeException();
         }
     }
 
     @Override
-    public void saveJaxbXml(@NotNull IServiceLocator serviceLocator) {
+    public void saveJaxbXml() {
         @NotNull final Domain domain = new Domain();
-        domain.initFromInternalStorage(serviceLocator);
+        domain.initFromInternalStorage();
 
         try {
             @NotNull final JAXBContext jaxbContext = JAXBContext.newInstance(Domain.class);
@@ -128,9 +143,9 @@ public class PersistService implements IPersistService {
     }
 
     @Override
-    public void saveJaxbJson(@NotNull IServiceLocator serviceLocator) {
+    public void saveJaxbJson() {
         @NotNull final Domain domain = new Domain();
-        domain.initFromInternalStorage(serviceLocator);
+        domain.initFromInternalStorage();
 
         System.setProperty("javax.xml.bind.context.factory", "org.eclipse.persistence.jaxb.JAXBContextFactory");
         @NotNull final Map<String, Object> jaxbProperties = new HashMap<>();
@@ -147,13 +162,14 @@ public class PersistService implements IPersistService {
     }
 
     @Override
-    public void loadJaxbXml(@NotNull IServiceLocator serviceLocator) {
+    public void loadJaxbXml() {
+        if (projectService == null || taskService == null) throw new DeserializeException();
         try {
             @NotNull final JAXBContext jaxbContext = JAXBContext.newInstance(Domain.class);
             @NotNull final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             @NotNull final Domain domain = (Domain) unmarshaller.unmarshal(new File(FILENAME + "jaxb.xml"));
-            domain.getProjects().forEach(project -> serviceLocator.getProjectService().save(project));
-            domain.getTasks().forEach(task -> serviceLocator.getTaskService().save(task));
+            domain.getProjects().forEach(project -> projectService.save(project));
+            domain.getTasks().forEach(task -> taskService.save(task));
         } catch (Exception e) {
             System.err.println(e.getMessage());
             throw new DeserializeException();
@@ -161,7 +177,8 @@ public class PersistService implements IPersistService {
     }
 
     @Override
-    public void loadJaxbJson(@NotNull IServiceLocator serviceLocator) {
+    public void loadJaxbJson() {
+        if (projectService == null || taskService == null) throw new DeserializeException();
         System.setProperty("javax.xml.bind.context.factory", "org.eclipse.persistence.jaxb.JAXBContextFactory");
         @NotNull final Map<String, Object> jaxbProperties = new HashMap<>();
         jaxbProperties.put(JAXBContextProperties.MEDIA_TYPE, "application/json");
@@ -171,8 +188,8 @@ public class PersistService implements IPersistService {
             @NotNull final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             @NotNull final StreamSource jsonFile = new StreamSource(FILENAME + "jaxb.json");
             @NotNull final Domain domain = unmarshaller.unmarshal(jsonFile, Domain.class).getValue();
-            domain.getProjects().forEach(project -> serviceLocator.getProjectService().save(project));
-            domain.getTasks().forEach(task -> serviceLocator.getTaskService().save(task));
+            domain.getProjects().forEach(project -> projectService.save(project));
+            domain.getTasks().forEach(task -> taskService.save(task));
         } catch (Exception e) {
             throw new DeserializeException();
         }

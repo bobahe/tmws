@@ -6,22 +6,27 @@ import ru.levin.tmws.api.repository.IUserRepository;
 import ru.levin.tmws.api.service.IUserService;
 import ru.levin.tmws.dto.UserDTO;
 import ru.levin.tmws.entity.RoleType;
+import ru.levin.tmws.exception.InternalServiceException;
 import ru.levin.tmws.exception.UpdateException;
 import ru.levin.tmws.repository.UserRepository;
 import ru.levin.tmws.util.ServiceUtil;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.util.List;
 
-public final class UserService extends AbstractEntityService<UserDTO> implements IUserService {
+@ApplicationScoped
+public class UserService extends AbstractEntityService<UserDTO> implements IUserService {
 
-    public UserService(@NotNull final EntityManagerFactory entityManagerFactory) {
-        super(entityManagerFactory);
-    }
+    @Nullable
+    @Inject
+    private EntityManagerFactory entityManagerFactory;
 
     @Override
     public @NotNull List<UserDTO> getAll() {
+        if (entityManagerFactory == null) throw new InternalServiceException();
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
         @NotNull final IUserRepository repository = new UserRepository(entityManager);
         entityManager.getTransaction().begin();
@@ -34,6 +39,7 @@ public final class UserService extends AbstractEntityService<UserDTO> implements
     @Override
     @Nullable
     public UserDTO save(@Nullable final UserDTO entity) {
+        if (entityManagerFactory == null) throw new InternalServiceException();
         if (entity == null) return null;
         if (entity.getLogin() == null || entity.getLogin().isEmpty()) return null;
         if (entity.getPassword() == null || entity.getPassword().isEmpty()) return null;
@@ -50,6 +56,7 @@ public final class UserService extends AbstractEntityService<UserDTO> implements
     @Override
     @Nullable
     public UserDTO update(@Nullable final UserDTO entity) {
+        if (entityManagerFactory == null) throw new InternalServiceException();
         if (entity == null) return null;
         if (entity.getLogin() == null || entity.getLogin().isEmpty()) return null;
         if (entity.getPassword() == null || entity.getPassword().isEmpty()) return null;
@@ -65,6 +72,7 @@ public final class UserService extends AbstractEntityService<UserDTO> implements
 
     @Override
     public boolean remove(final @Nullable UserDTO entity) {
+        if (entityManagerFactory == null) throw new InternalServiceException();
         if (entity == null) return false;
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
         @NotNull final IUserRepository repository = new UserRepository(entityManager);
@@ -77,6 +85,7 @@ public final class UserService extends AbstractEntityService<UserDTO> implements
 
     @Override
     public boolean removeAll() {
+        if (entityManagerFactory == null) throw new InternalServiceException();
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
         @NotNull final IUserRepository repository = new UserRepository(entityManager);
         entityManager.getTransaction().begin();
@@ -89,6 +98,7 @@ public final class UserService extends AbstractEntityService<UserDTO> implements
     @Nullable
     @Override
     public UserDTO findOneById(final @Nullable String id) {
+        if (entityManagerFactory == null) throw new InternalServiceException();
         if (id == null) return null;
         @NotNull final EntityManager entityManager = entityManagerFactory.createEntityManager();
         @NotNull final IUserRepository repository = new UserRepository(entityManager);
@@ -102,6 +112,7 @@ public final class UserService extends AbstractEntityService<UserDTO> implements
     @Override
     @Nullable
     public UserDTO getUserByLoginAndPassword(@Nullable final String login, @Nullable final String password) {
+        if (entityManagerFactory == null) throw new InternalServiceException();
         if (login == null || login.isEmpty()) return null;
         if (password == null || password.isEmpty()) return null;
         @NotNull final String hash = ServiceUtil.md5(password);
@@ -117,6 +128,7 @@ public final class UserService extends AbstractEntityService<UserDTO> implements
     @Override
     @Nullable
     public UserDTO setNewPassword(@Nullable final UserDTO user, @Nullable final String password) {
+        if (entityManagerFactory == null) throw new InternalServiceException();
         if (password == null || password.isEmpty()) return null;
         if (user == null) return null;
         @NotNull final String hash = ServiceUtil.md5(password);
@@ -138,6 +150,7 @@ public final class UserService extends AbstractEntityService<UserDTO> implements
 
     @Override
     public void changeUserRole(@Nullable final UserDTO user, final @Nullable String role) {
+        if (entityManagerFactory == null) throw new InternalServiceException();
         if (role == null || role.isEmpty()) throw new UpdateException();
         if (user == null || user.getId() == null) throw new UpdateException();
         @NotNull final RoleType roleType = RoleType.valueOf(role);

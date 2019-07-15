@@ -1,126 +1,131 @@
 package ru.levin.tmws.endpoint;
 
 import org.jetbrains.annotations.Nullable;
-import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.IAdminEndpoint;
+import ru.levin.tmws.api.service.IPersistService;
+import ru.levin.tmws.api.service.ISessionService;
+import ru.levin.tmws.api.service.IUserService;
 import ru.levin.tmws.dto.SessionDTO;
 import ru.levin.tmws.exception.AccessForbiddenException;
 import ru.levin.tmws.exception.InternalServiceException;
 import ru.levin.tmws.util.ServiceUtil;
 
+import javax.inject.Inject;
 import javax.jws.WebService;
 
 @WebService(endpointInterface = "ru.levin.tmws.api.endpoint.IAdminEndpoint")
 public class AdminEndpoint implements IAdminEndpoint {
 
-    @Nullable private IServiceLocator serviceLocator;
+    @Nullable
+    @Inject
+    private ISessionService sessionService;
 
-    public AdminEndpoint() {
-    }
+    @Nullable
+    @Inject
+    private IUserService userService;
 
-    public AdminEndpoint(@Nullable final IServiceLocator serviceLocator) {
-        this.serviceLocator = serviceLocator;
-    }
-
+    @Nullable
+    @Inject
+    private IPersistService persistService;
 
     @Override
     public void serialize(final @Nullable SessionDTO session) {
-        if (serviceLocator == null) throw new InternalServiceException();
-        ServiceUtil.checkSession(session, serviceLocator.getSessionService());
+        if (sessionService == null || userService == null || persistService == null) throw new InternalServiceException();
+        ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new InternalServiceException();
-        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), serviceLocator.getUserService());
+        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), userService);
         if (!isAdmin) throw new AccessForbiddenException();
-        serviceLocator.getPersistService().serialize(serviceLocator);
+        persistService.serialize();
     }
 
     @Override
     public void deserialize(final @Nullable SessionDTO session) {
-        if (serviceLocator == null) throw new InternalServiceException();
-        ServiceUtil.checkSession(session, serviceLocator.getSessionService());
+        if (sessionService == null || userService == null || persistService == null) throw new InternalServiceException();
+        ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new InternalServiceException();
-        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), serviceLocator.getUserService());
+        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), userService);
         if (!isAdmin) throw new AccessForbiddenException();
-        serviceLocator.getPersistService().deserialize(serviceLocator);
+        persistService.deserialize();
     }
 
     @Override
     public void saveFxmlXml(final @Nullable SessionDTO session) {
-        if (serviceLocator == null) throw new InternalServiceException();
-        ServiceUtil.checkSession(session, serviceLocator.getSessionService());
+        if (sessionService == null || userService == null || persistService == null) throw new InternalServiceException();
+        ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new InternalServiceException();
-        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), serviceLocator.getUserService());
+        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), userService);
         if (!isAdmin) throw new AccessForbiddenException();
-        serviceLocator.getPersistService().saveFxmlXml(serviceLocator);
+        persistService.saveFxmlXml();
     }
 
     @Override
     public void saveFxmlJson(final @Nullable SessionDTO session) {
-        if (serviceLocator == null) throw new InternalServiceException();
-        ServiceUtil.checkSession(session, serviceLocator.getSessionService());
+        if (sessionService == null || userService == null || persistService == null) throw new InternalServiceException();
+        ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new InternalServiceException();
-        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), serviceLocator.getUserService());
+        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), userService);
         if (!isAdmin) throw new AccessForbiddenException();
-        serviceLocator.getPersistService().saveFxmlJson(serviceLocator);
+        persistService.saveFxmlJson();
     }
 
     @Override
     public void loadFxmlXml(final @Nullable SessionDTO session) {
-        if (serviceLocator == null) throw new InternalServiceException();
-        ServiceUtil.checkSession(session, serviceLocator.getSessionService());
+        if (sessionService == null || userService == null || persistService == null) throw new InternalServiceException();
+        ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new InternalServiceException();
-        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), serviceLocator.getUserService());
+        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), userService);
         if (!isAdmin) throw new AccessForbiddenException();
-        serviceLocator.getPersistService().loadFxmlXml(serviceLocator);
+        persistService.loadFxmlXml();
     }
 
     @Override
     public void loadFxmlJson(final @Nullable SessionDTO session) {
-        if (serviceLocator == null) throw new InternalServiceException();
-        ServiceUtil.checkSession(session, serviceLocator.getSessionService());
+        if (sessionService == null || userService == null || persistService == null) throw new InternalServiceException();
+        ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new InternalServiceException();
-        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), serviceLocator.getUserService());
+        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), userService);
         if (!isAdmin) throw new AccessForbiddenException();
-        serviceLocator.getPersistService().loadFxmlJson(serviceLocator);
+        persistService.loadFxmlJson();
     }
 
     @Override
     public void saveJaxbXml(final @Nullable SessionDTO session) {
-        if (serviceLocator == null) throw new InternalServiceException();
-        ServiceUtil.checkSession(session, serviceLocator.getSessionService());
+        if (sessionService == null || userService == null || persistService == null) throw new InternalServiceException();
+        ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new InternalServiceException();
-        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), serviceLocator.getUserService());
+        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), userService);
         if (!isAdmin) throw new AccessForbiddenException();
-        serviceLocator.getPersistService().saveJaxbXml(serviceLocator);
+        persistService.saveJaxbXml();
     }
 
     @Override
     public void saveJaxbJson(final @Nullable SessionDTO session) {
-        if (serviceLocator == null) throw new InternalServiceException();
-        ServiceUtil.checkSession(session, serviceLocator.getSessionService());
+        if (sessionService == null || userService == null || persistService == null) throw new InternalServiceException();
+        ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new InternalServiceException();
-        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), serviceLocator.getUserService());
+        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), userService);
         if (!isAdmin) throw new AccessForbiddenException();
-        serviceLocator.getPersistService().saveJaxbJson(serviceLocator);
+        persistService.saveJaxbJson();
     }
 
     @Override
     public void loadJaxbXml(final @Nullable SessionDTO session) {
-        if (serviceLocator == null) throw new InternalServiceException();
-        ServiceUtil.checkSession(session, serviceLocator.getSessionService());
+        if (sessionService == null || userService == null || persistService == null) throw new InternalServiceException();
+        ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new InternalServiceException();
-        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), serviceLocator.getUserService());
+        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), userService);
         if (!isAdmin) throw new AccessForbiddenException();
-        serviceLocator.getPersistService().loadJaxbXml(serviceLocator);
+        persistService.loadJaxbXml();
     }
 
     @Override
     public void loadJaxbJson(final @Nullable SessionDTO session) {
-        if (serviceLocator == null) throw new InternalServiceException();
-        ServiceUtil.checkSession(session, serviceLocator.getSessionService());
+        if (sessionService == null || userService == null || persistService == null) throw new InternalServiceException();
+        ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new InternalServiceException();
-        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), serviceLocator.getUserService());
+        final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), userService);
         if (!isAdmin) throw new AccessForbiddenException();
-        serviceLocator.getPersistService().loadJaxbJson(serviceLocator);
+        persistService.loadJaxbJson();
     }
 
 }

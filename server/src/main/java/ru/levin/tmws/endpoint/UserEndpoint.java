@@ -2,8 +2,9 @@ package ru.levin.tmws.endpoint;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.IUserEndpoint;
+import ru.levin.tmws.api.service.ISessionService;
+import ru.levin.tmws.api.service.IUserService;
 import ru.levin.tmws.dto.SessionDTO;
 import ru.levin.tmws.dto.UserDTO;
 import ru.levin.tmws.entity.RoleType;
@@ -12,44 +13,42 @@ import ru.levin.tmws.exception.SaveException;
 import ru.levin.tmws.exception.SessionValidationException;
 import ru.levin.tmws.util.ServiceUtil;
 
+import javax.inject.Inject;
 import javax.jws.WebService;
 
 @WebService(endpointInterface = "ru.levin.tmws.api.endpoint.IUserEndpoint")
 public class UserEndpoint implements IUserEndpoint {
 
     @Nullable
-    private IServiceLocator serviceLocator;
+    @Inject
+    private ISessionService sessionService;
 
-    public UserEndpoint() {
-    }
-
-    public UserEndpoint(@Nullable final IServiceLocator serviceLocator) {
-        this.serviceLocator = serviceLocator;
-    }
+    @Nullable
+    @Inject
+    private IUserService userService;
 
     @Override
     public void changeUserPassword(final @Nullable SessionDTO session, final @Nullable String password) {
-        if (serviceLocator == null) throw new InternalServiceException();
-        ServiceUtil.checkSession(session, serviceLocator.getSessionService());
+        if (sessionService == null || userService == null) throw new InternalServiceException();
+        ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new SessionValidationException();
         if (password == null || password.isEmpty()) throw new SaveException();
-        serviceLocator.getUserService()
-                .setNewPassword(serviceLocator.getUserService().findById(session.getUserId()), password);
+        userService.setNewPassword(userService.findById(session.getUserId()), password);
     }
 
     @Override
     public void changeProfile(final @Nullable SessionDTO session, final @Nullable UserDTO user) {
-        if (serviceLocator == null) throw new InternalServiceException();
-        ServiceUtil.checkSession(session, serviceLocator.getSessionService());
+        if (sessionService == null || userService == null) throw new InternalServiceException();
+        ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new SessionValidationException();
         if (user == null) throw new SaveException();
-        @Nullable final UserDTO updatedUser =  serviceLocator.getUserService().update(user);
+        @Nullable final UserDTO updatedUser =  userService.update(user);
         if (updatedUser == null) throw new SaveException();
     }
 
     @Override
     public void registerUser(final @Nullable String login, final @Nullable String password) {
-        if (serviceLocator == null) throw new InternalServiceException();
+        if (userService == null) throw new InternalServiceException();
         if (login == null || login.isEmpty()) throw new InternalServiceException();
         if (password == null || password.isEmpty()) throw new InternalServiceException();
 
@@ -57,6 +56,6 @@ public class UserEndpoint implements IUserEndpoint {
         user.setLogin(login);
         user.setPassword(password);
         user.setRoleType(RoleType.USER);
-        serviceLocator.getUserService().save(user);
+        userService.save(user);
     }
 }

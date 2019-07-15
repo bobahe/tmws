@@ -1,29 +1,27 @@
 package ru.levin.tmws.api.service;
 
-import org.jetbrains.annotations.NotNull;
-import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.service.PersistService;
 
 public interface IPersistService extends IService<PersistService> {
 
-    void serialize(@NotNull IServiceLocator serviceLocator);
+    void serialize();
 
-    void deserialize(@NotNull IServiceLocator serviceLocator);
+    void deserialize();
 
-    void saveFxmlXml(@NotNull IServiceLocator serviceLocator);
+    void saveFxmlXml();
 
-    void saveFxmlJson(@NotNull IServiceLocator serviceLocator);
+    void saveFxmlJson();
 
-    void loadFxmlXml(@NotNull IServiceLocator serviceLocator);
+    void loadFxmlXml();
 
-    void loadFxmlJson(@NotNull IServiceLocator serviceLocator);
+    void loadFxmlJson();
 
-    void saveJaxbXml(@NotNull IServiceLocator serviceLocator);
+    void saveJaxbXml();
 
-    void saveJaxbJson(@NotNull IServiceLocator serviceLocator);
+    void saveJaxbJson();
 
-    void loadJaxbXml(@NotNull IServiceLocator serviceLocator);
+    void loadJaxbXml();
 
-    void loadJaxbJson(@NotNull IServiceLocator serviceLocator);
+    void loadJaxbJson();
 
 }
