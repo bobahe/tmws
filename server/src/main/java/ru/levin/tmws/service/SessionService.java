@@ -10,7 +10,6 @@ import ru.levin.tmws.util.ServiceUtil;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,10 +18,6 @@ import java.util.List;
 public class SessionService extends AbstractEntityService<SessionDTO> implements ISessionService {
 
     @NotNull private final List<SessionDTO> list = new ArrayList<>();
-
-    @NotNull
-    @Inject
-    private EntityManager entityManager;
 
     @NotNull
     @Inject
