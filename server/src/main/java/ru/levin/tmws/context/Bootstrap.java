@@ -1,35 +1,18 @@
 package ru.levin.tmws.context;
 
-import org.hibernate.boot.Metadata;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.registry.StandardServiceRegistry;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.cfg.Environment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.endpoint.*;
-import ru.levin.tmws.api.service.IPropertyService;
 import ru.levin.tmws.api.service.IUserService;
-import ru.levin.tmws.dto.ProjectDTO;
-import ru.levin.tmws.dto.SessionDTO;
-import ru.levin.tmws.dto.TaskDTO;
 import ru.levin.tmws.dto.UserDTO;
-import ru.levin.tmws.entity.*;
+import ru.levin.tmws.entity.RoleType;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
-import javax.persistence.EntityManagerFactory;
 import javax.xml.ws.Endpoint;
-import java.util.HashMap;
-import java.util.Map;
 
 @ApplicationScoped
 public class Bootstrap {
-
-    @Nullable
-    @Inject
-    private IPropertyService propertyService;
 
     @Nullable
     @Inject
@@ -56,8 +39,8 @@ public class Bootstrap {
     private IUserService userService;
 
     public void init() {
-        createDefaultUsers();
         publishEndpoints();
+        createDefaultUsers();
     }
 
     private void publishEndpoints() {
@@ -87,36 +70,6 @@ public class Bootstrap {
             user.setRoleType(RoleType.USER);
             userService.save(user);
         }
-    }
-
-    @Produces
-    @ApplicationScoped
-    private EntityManagerFactory getEntityManagerFactory() {
-        if (propertyService == null) return null;
-        propertyService.init();
-        @NotNull final Map<String, String> settings = new HashMap<>();
-        settings.put(Environment.DRIVER, propertyService.getJdbcDriver());
-        settings.put(Environment.URL, propertyService.getJdbcUrl());
-        settings.put(Environment.USER, propertyService.getJdbcUsername());
-        settings.put(Environment.PASS, propertyService.getJdbcPassword());
-        settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQL5InnoDBDialect");
-        settings.put(Environment.HBM2DDL_AUTO, "update");
-        settings.put(Environment.SHOW_SQL, "true");
-        settings.put(Environment.HBM2DDL_CHARSET_NAME, "utf8");
-        @NotNull final StandardServiceRegistryBuilder registryBuilder = new StandardServiceRegistryBuilder();
-        registryBuilder.applySettings(settings);
-        final StandardServiceRegistry registry = registryBuilder.build();
-        final MetadataSources sources = new MetadataSources(registry);
-        sources.addAnnotatedClass(Task.class);
-        sources.addAnnotatedClass(Project.class);
-        sources.addAnnotatedClass(User.class);
-        sources.addAnnotatedClass(Session.class);
-        sources.addAnnotatedClass(TaskDTO.class);
-        sources.addAnnotatedClass(ProjectDTO.class);
-        sources.addAnnotatedClass(UserDTO.class);
-        sources.addAnnotatedClass(SessionDTO.class);
-        final Metadata metadata = sources.getMetadataBuilder().build();
-        return metadata.getSessionFactoryBuilder().build();
     }
 
 }
