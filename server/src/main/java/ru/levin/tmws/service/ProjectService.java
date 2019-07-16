@@ -6,11 +6,9 @@ import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.repository.IProjectRepository;
 import ru.levin.tmws.api.service.IProjectService;
 import ru.levin.tmws.dto.ProjectDTO;
-import ru.levin.tmws.repository.ProjectRepository;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,11 +20,10 @@ public class ProjectService extends AbstractEntityService<ProjectDTO> implements
 
     @NotNull
     @Inject
-    private EntityManager entityManager;
+    private IProjectRepository repository;
 
     @Override
     public @NotNull List<ProjectDTO> getAll() {
-        @NotNull final IProjectRepository repository = new ProjectRepository(entityManager);
         @NotNull final List<ProjectDTO> result = repository.findAll();
         return result;
     }
@@ -36,7 +33,6 @@ public class ProjectService extends AbstractEntityService<ProjectDTO> implements
     public ProjectDTO save(final @Nullable ProjectDTO entity) {
         if (entity == null) return null;
         if (entity.getName() == null || entity.getName().isEmpty()) return null;
-        @NotNull final IProjectRepository repository = new ProjectRepository(entityManager);
         repository.persist(entity);
         return entity;
     }
@@ -47,7 +43,6 @@ public class ProjectService extends AbstractEntityService<ProjectDTO> implements
         if (entity == null) return null;
         if (entity.getId() == null || entity.getId().isEmpty()) return null;
         if (entity.getName() == null || entity.getName().isEmpty()) return null;
-        @NotNull final IProjectRepository repository = new ProjectRepository(entityManager);
         repository.merge(entity);
         return entity;
     }
@@ -56,14 +51,12 @@ public class ProjectService extends AbstractEntityService<ProjectDTO> implements
     public boolean remove(final @Nullable ProjectDTO entity) {
         if (entity == null) return false;
         if (entity.getId() == null || entity.getId().isEmpty()) return false;
-        @NotNull final IProjectRepository repository = new ProjectRepository(entityManager);
         repository.remove(entity);
         return true;
     }
 
     @Override
     public boolean removeAll() {
-        @NotNull final IProjectRepository repository = new ProjectRepository(entityManager);
         repository.removeAll();
         return true;
     }
@@ -72,15 +65,13 @@ public class ProjectService extends AbstractEntityService<ProjectDTO> implements
     @Override
     public ProjectDTO findOneById(final @Nullable String id) {
         if (id == null) return null;
-        @NotNull final IProjectRepository repository = new ProjectRepository(entityManager);
-        @Nullable final ProjectDTO project = repository.findOne(id);
+        @Nullable final ProjectDTO project = repository.findBy(id);
         return project;
     }
 
     @Override
     public void removeByUserId(@Nullable final String userId) {
         if (userId == null) return;
-        @NotNull final IProjectRepository repository = new ProjectRepository(entityManager);
         repository.removeByUserId(userId);
     }
 
@@ -95,16 +86,14 @@ public class ProjectService extends AbstractEntityService<ProjectDTO> implements
     @NotNull
     public List<ProjectDTO> findAllByUserId(@Nullable final String userId) {
         if (userId == null) return list;
-        @NotNull final IProjectRepository repository = new ProjectRepository(entityManager);
-        @NotNull final List<ProjectDTO> projects = repository.findAllByUserId(userId);
+        @NotNull final List<ProjectDTO> projects = repository.findByUserId(userId);
         return projects;
     }
 
     @Override
     public @NotNull List<ProjectDTO> findAllByPartOfNameOrDescription(final @Nullable String partOfName) {
         if (partOfName == null) return list;
-        @NotNull final IProjectRepository repository = new ProjectRepository(entityManager);
-        @NotNull final List<ProjectDTO> projects = repository.findAllByPartOfNameOrDescription(partOfName);
+        @NotNull final List<ProjectDTO> projects = repository.findByNameOrDescription(partOfName);
         return projects;
     }
 

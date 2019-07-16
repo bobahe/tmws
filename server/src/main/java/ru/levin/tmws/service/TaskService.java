@@ -6,11 +6,9 @@ import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.repository.ITaskRepository;
 import ru.levin.tmws.api.service.ITaskService;
 import ru.levin.tmws.dto.TaskDTO;
-import ru.levin.tmws.repository.TaskRepository;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,11 +21,10 @@ public class TaskService extends AbstractEntityService<TaskDTO> implements ITask
 
     @NotNull
     @Inject
-    private EntityManager entityManager;
+    private ITaskRepository repository;
 
     @Override
     public @NotNull List<TaskDTO> getAll() {
-        @NotNull final ITaskRepository repository = new TaskRepository(entityManager);
         @NotNull final List<TaskDTO> result = repository.findAll();
         return result;
     }
@@ -36,8 +33,7 @@ public class TaskService extends AbstractEntityService<TaskDTO> implements ITask
     @NotNull
     public List<TaskDTO> findAllByUserIdAndProjectId(@Nullable final String userId, @Nullable final String projectId) {
         if (userId == null || projectId == null) return list;
-        @NotNull final ITaskRepository repository = new TaskRepository(entityManager);
-        @NotNull final List<TaskDTO> tasks = repository.findAllByUserIdProjectId(userId, projectId);
+        @NotNull final List<TaskDTO> tasks = repository.findByUserIdAndProjectId(userId, projectId);
         return tasks;
     }
 
@@ -45,15 +41,13 @@ public class TaskService extends AbstractEntityService<TaskDTO> implements ITask
     @NotNull
     public List<TaskDTO> findAllByUserId(@Nullable final String userId) {
         if (userId == null) return list;
-        @NotNull final ITaskRepository repository = new TaskRepository(entityManager);
-        @NotNull final List<TaskDTO> tasks = repository.findAllByUserId(userId);
+        @NotNull final List<TaskDTO> tasks = repository.findByUserId(userId);
         return tasks;
     }
 
     @Override
     public void removeByUserId(@Nullable final String userId) {
         if (userId == null) return;
-        @NotNull final ITaskRepository repository = new TaskRepository(entityManager);
         repository.removeByUserId(userId);
     }
 
@@ -68,8 +62,7 @@ public class TaskService extends AbstractEntityService<TaskDTO> implements ITask
     @Override
     public @NotNull List<TaskDTO> findAllByPartOfNameOrDescription(final @Nullable String partOfName) {
         if (partOfName == null) return list;
-        @NotNull final ITaskRepository repository = new TaskRepository(entityManager);
-        @NotNull final List<TaskDTO> tasks = repository.findAllByPartOfNameOrDescription(partOfName);
+        @NotNull final List<TaskDTO> tasks = repository.findByNameOrDescription(partOfName);
         return tasks;
     }
 
@@ -78,7 +71,6 @@ public class TaskService extends AbstractEntityService<TaskDTO> implements ITask
     public TaskDTO save(@Nullable final TaskDTO entity) {
         if (entity == null) return null;
         if (entity.getName() == null || entity.getName().isEmpty()) return null;
-        @NotNull final ITaskRepository repository = new TaskRepository(entityManager);
         repository.persist(entity);
         return entity;
     }
@@ -89,7 +81,6 @@ public class TaskService extends AbstractEntityService<TaskDTO> implements ITask
         if (entity == null) return null;
         if (entity.getId() == null || entity.getId().isEmpty()) return null;
         if (entity.getName() == null || entity.getName().isEmpty()) return null;
-        @NotNull final ITaskRepository repository = new TaskRepository(entityManager);
         repository.merge(entity);
         return entity;
     }
@@ -97,14 +88,12 @@ public class TaskService extends AbstractEntityService<TaskDTO> implements ITask
     @Override
     public boolean remove(final @Nullable TaskDTO entity) {
         if (entity == null) return false;
-        @NotNull final ITaskRepository repository = new TaskRepository(entityManager);
         repository.remove(entity);
         return true;
     }
 
     @Override
     public boolean removeAll() {
-        @NotNull final ITaskRepository repository = new TaskRepository(entityManager);
         repository.removeAll();
         return true;
     }
@@ -113,8 +102,7 @@ public class TaskService extends AbstractEntityService<TaskDTO> implements ITask
     @Override
     public TaskDTO findOneById(final @Nullable String id) {
         if (id == null) return null;
-        @NotNull final ITaskRepository repository = new TaskRepository(entityManager);
-        @Nullable final TaskDTO task = repository.findOne(id);
+        @Nullable final TaskDTO task = repository.findBy(id);
         return task;
     }
 

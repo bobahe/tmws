@@ -1,14 +1,18 @@
 package ru.levin.tmws.api.repository;
 
+import org.apache.deltaspike.data.api.FullEntityRepository;
+import org.apache.deltaspike.data.api.Repository;
 import org.jetbrains.annotations.NotNull;
 import ru.levin.tmws.dto.ProjectDTO;
 
 import java.util.List;
 
-public interface IProjectRepository extends IRepository<ProjectDTO> {
+@Repository
+public interface IProjectRepository extends FullEntityRepository<ProjectDTO, String> {
 
+    void removeAll();
     void removeByUserId(@NotNull final String userId);
-    @NotNull List<ProjectDTO> findAllByUserId(@NotNull final String userId);
-    @NotNull List<ProjectDTO> findAllByPartOfNameOrDescription(@NotNull final String name);
+    @NotNull List<ProjectDTO> findByUserId(@NotNull final String userId);
+    @NotNull List<ProjectDTO> findByNameOrDescription(@NotNull final String name);
 
 }

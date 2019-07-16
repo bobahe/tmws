@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.repository.ISessionRepository;
 import ru.levin.tmws.api.service.ISessionService;
 import ru.levin.tmws.dto.SessionDTO;
-import ru.levin.tmws.repository.SessionRepository;
 import ru.levin.tmws.util.ServiceUtil;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -25,9 +24,12 @@ public class SessionService extends AbstractEntityService<SessionDTO> implements
     @Inject
     private EntityManager entityManager;
 
+    @NotNull
+    @Inject
+    private ISessionRepository repository;
+
     @Override
     public @NotNull List<SessionDTO> getAll() {
-        @NotNull final ISessionRepository repository = new SessionRepository(entityManager);
         @NotNull final List<SessionDTO> result = repository.findAll();
         return result;
     }
@@ -36,8 +38,7 @@ public class SessionService extends AbstractEntityService<SessionDTO> implements
     @NotNull
     public List<SessionDTO> findAllByUserId(@Nullable final String userId) {
         if (userId == null) return list;
-        @NotNull final ISessionRepository repository = new SessionRepository(entityManager);
-        @NotNull final List<SessionDTO> result = repository.findAllByUserId(userId);
+        @NotNull final List<SessionDTO> result = repository.findByUserId(userId);
         return result;
     }
 
@@ -50,7 +51,6 @@ public class SessionService extends AbstractEntityService<SessionDTO> implements
     @Override
     public void removeByUserId(@Nullable final String userId) {
         if (userId == null) return;
-        @NotNull final ISessionRepository repository = new SessionRepository(entityManager);
         repository.removeByUserId(userId);
     }
 
@@ -59,7 +59,6 @@ public class SessionService extends AbstractEntityService<SessionDTO> implements
     public SessionDTO save(@Nullable final SessionDTO entity) {
         if (entity == null) return null;
         entity.setSignature(ServiceUtil.sign(entity, "123", 5));
-        @NotNull final ISessionRepository repository = new SessionRepository(entityManager);
         repository.persist(entity);
         return entity;
     }
@@ -69,7 +68,6 @@ public class SessionService extends AbstractEntityService<SessionDTO> implements
     public SessionDTO update(@Nullable final SessionDTO entity) {
         if (entity == null) return null;
         if (entity.getId() == null || entity.getId().isEmpty()) return null;
-        @NotNull final ISessionRepository repository = new SessionRepository(entityManager);
         repository.merge(entity);
         return entity;
     }
@@ -77,14 +75,12 @@ public class SessionService extends AbstractEntityService<SessionDTO> implements
     @Override
     public boolean remove(final @Nullable SessionDTO entity) {
         if (entity == null) return false;
-        @NotNull final ISessionRepository repository = new SessionRepository(entityManager);
         repository.remove(entity);
         return true;
     }
 
     @Override
     public boolean removeAll() {
-        @NotNull final ISessionRepository repository = new SessionRepository(entityManager);
         repository.removeAll();
         return true;
     }
@@ -93,8 +89,7 @@ public class SessionService extends AbstractEntityService<SessionDTO> implements
     @Override
     public SessionDTO findOneById(final @Nullable String id) {
         if (id == null) return null;
-        @NotNull final ISessionRepository repository = new SessionRepository(entityManager);
-        @Nullable final SessionDTO session = repository.findOne(id);
+        @Nullable final SessionDTO session = repository.findBy(id);
         return session;
     }
 

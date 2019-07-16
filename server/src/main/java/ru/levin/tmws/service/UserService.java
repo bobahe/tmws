@@ -8,12 +8,10 @@ import ru.levin.tmws.api.service.IUserService;
 import ru.levin.tmws.dto.UserDTO;
 import ru.levin.tmws.entity.RoleType;
 import ru.levin.tmws.exception.UpdateException;
-import ru.levin.tmws.repository.UserRepository;
 import ru.levin.tmws.util.ServiceUtil;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import java.util.List;
 
 @ApplicationScoped
@@ -22,11 +20,10 @@ public class UserService extends AbstractEntityService<UserDTO> implements IUser
 
     @NotNull
     @Inject
-    private EntityManager entityManager;
+    private IUserRepository repository;
 
     @Override
     public @NotNull List<UserDTO> getAll() {
-        @NotNull final IUserRepository repository = new UserRepository(entityManager);
         @NotNull final List<UserDTO> user = repository.findAll();
         return user;
     }
@@ -38,7 +35,6 @@ public class UserService extends AbstractEntityService<UserDTO> implements IUser
         if (entity.getLogin() == null || entity.getLogin().isEmpty()) return null;
         if (entity.getPassword() == null || entity.getPassword().isEmpty()) return null;
         entity.setPassword(ServiceUtil.md5(entity.getPassword()));
-        @NotNull final IUserRepository repository = new UserRepository(entityManager);
         repository.persist(entity);
         return entity;
     }
@@ -50,7 +46,6 @@ public class UserService extends AbstractEntityService<UserDTO> implements IUser
         if (entity.getLogin() == null || entity.getLogin().isEmpty()) return null;
         if (entity.getPassword() == null || entity.getPassword().isEmpty()) return null;
         if (entity.getId() == null || entity.getId().isEmpty()) return null;
-        @NotNull final IUserRepository repository = new UserRepository(entityManager);
         repository.merge(entity);
         return entity;
     }
@@ -58,14 +53,12 @@ public class UserService extends AbstractEntityService<UserDTO> implements IUser
     @Override
     public boolean remove(final @Nullable UserDTO entity) {
         if (entity == null) return false;
-        @NotNull final IUserRepository repository = new UserRepository(entityManager);
         repository.remove(entity);
         return true;
     }
 
     @Override
     public boolean removeAll() {
-        @NotNull final IUserRepository repository = new UserRepository(entityManager);
         repository.removeAll();
         return true;
     }
@@ -74,8 +67,7 @@ public class UserService extends AbstractEntityService<UserDTO> implements IUser
     @Override
     public UserDTO findOneById(final @Nullable String id) {
         if (id == null) return null;
-        @NotNull final IUserRepository repository = new UserRepository(entityManager);
-        @Nullable final UserDTO user = repository.findOne(id);
+        @Nullable final UserDTO user = repository.findBy(id);
         return user;
     }
 
@@ -85,8 +77,7 @@ public class UserService extends AbstractEntityService<UserDTO> implements IUser
         if (login == null || login.isEmpty()) return null;
         if (password == null || password.isEmpty()) return null;
         @NotNull final String hash = ServiceUtil.md5(password);
-        @NotNull final IUserRepository repository = new UserRepository(entityManager);
-        @Nullable final UserDTO user = repository.findOneByLoginAndPassword(login, hash);
+        @Nullable final UserDTO user = repository.findByLoginAndPassword(login, hash);
         return user;
     }
 
@@ -97,7 +88,6 @@ public class UserService extends AbstractEntityService<UserDTO> implements IUser
         if (user == null) return null;
         @NotNull final String hash = ServiceUtil.md5(password);
         user.setPassword(hash);
-        @NotNull final IUserRepository repository = new UserRepository(entityManager);
         repository.merge(user);
         return user;
     }
@@ -114,7 +104,6 @@ public class UserService extends AbstractEntityService<UserDTO> implements IUser
         if (user == null || user.getId() == null) throw new UpdateException();
         @NotNull final RoleType roleType = RoleType.valueOf(role);
         user.setRoleType(roleType);
-        @NotNull final IUserRepository repository = new UserRepository(entityManager);
         repository.merge(user);
     }
 

@@ -45,11 +45,11 @@ public class EntityManagerProducer {
     @NotNull
     @Produces
     @TransactionScoped
-    public EntityManager create() {
+    public EntityManager createEntityManager() {
         return this.entityManagerFactory.createEntityManager();
     }
 
-    public void dispose(@Disposes EntityManager entityManager) {
+    public void closeEntityManager(@Disposes EntityManager entityManager) {
         if (entityManager.isOpen()) entityManager.close();
     }
 
