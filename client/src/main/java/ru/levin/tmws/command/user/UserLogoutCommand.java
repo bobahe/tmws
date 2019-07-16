@@ -47,6 +47,7 @@ public final class UserLogoutCommand extends AbstractCommand {
     @Override
     public void execute() {
         sessionEndpoint.closeSession(serviceLocator.getCurrentSession());
+        serviceLocator.setCurrentSession(null);
     }
 
 }

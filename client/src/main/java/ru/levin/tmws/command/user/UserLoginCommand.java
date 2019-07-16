@@ -7,6 +7,7 @@ import ru.levin.tmws.api.endpoint.ISessionEndpoint;
 import ru.levin.tmws.api.endpoint.SessionDTO;
 import ru.levin.tmws.api.service.ITerminalService;
 import ru.levin.tmws.command.AbstractCommand;
+import ru.levin.tmws.exception.SessionNotNullException;
 
 public final class UserLoginCommand extends AbstractCommand {
 
@@ -53,6 +54,7 @@ public final class UserLoginCommand extends AbstractCommand {
 
     @Override
     public void execute() {
+        if (serviceLocator.getCurrentSession() != null) throw new SessionNotNullException();
         terminalService.println(LOGIN_PROMPT);
         @NotNull final String login = terminalService.getLine();
         terminalService.println(PASSWORD_PROMPT);
