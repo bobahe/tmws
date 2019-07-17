@@ -76,7 +76,7 @@ public class SessionService extends AbstractEntityService<SessionDTO> implements
 
     @Override
     public boolean removeAll() {
-        repository.removeAll();
+        repository.findAll().forEach(repository::remove);
         return true;
     }
 

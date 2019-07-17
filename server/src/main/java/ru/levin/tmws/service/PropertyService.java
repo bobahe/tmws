@@ -5,9 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.service.IPropertyService;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Properties;
 
 @ApplicationScoped
@@ -36,10 +35,14 @@ public class PropertyService implements IPropertyService {
         return props.getProperty("jdbc.driver");
     }
 
+    @Override
+    public @Nullable String getJdbcDialect() {
+        return props.getProperty("jdbc.dialect");
+    }
+
     @SneakyThrows
-    @PostConstruct
     public void init() {
-        try (FileInputStream in = new FileInputStream("db.properties")) {
+        try (InputStream in = this.getClass().getResourceAsStream("/db.properties")) {
             props.load(in);
         }
     }

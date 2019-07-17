@@ -59,7 +59,7 @@ public class UserService extends AbstractEntityService<UserDTO> implements IUser
 
     @Override
     public boolean removeAll() {
-        repository.removeAll();
+        repository.findAll().forEach(repository::remove);
         return true;
     }
 

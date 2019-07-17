@@ -3,9 +3,11 @@ package ru.levin.tmws.service;
 import org.apache.deltaspike.jpa.api.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.levin.tmws.api.repository.IProjectEntityRepository;
 import ru.levin.tmws.api.repository.IProjectRepository;
 import ru.levin.tmws.api.service.IProjectService;
 import ru.levin.tmws.dto.ProjectDTO;
+import ru.levin.tmws.entity.Project;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -21,6 +23,10 @@ public class ProjectService extends AbstractEntityService<ProjectDTO> implements
     @NotNull
     @Inject
     private IProjectRepository repository;
+
+    @NotNull
+    @Inject
+    private IProjectEntityRepository entityRepository;
 
     @Override
     public @NotNull List<ProjectDTO> getAll() {
@@ -51,13 +57,14 @@ public class ProjectService extends AbstractEntityService<ProjectDTO> implements
     public boolean remove(final @Nullable ProjectDTO entity) {
         if (entity == null) return false;
         if (entity.getId() == null || entity.getId().isEmpty()) return false;
-        repository.remove(entity);
+        @NotNull final Project savedEntity = entityRepository.findBy(entity.getId());
+        entityRepository.remove(savedEntity);
         return true;
     }
 
     @Override
     public boolean removeAll() {
-        repository.removeAll();
+        entityRepository.findAll().forEach(entityRepository::remove);
         return true;
     }
 
@@ -72,7 +79,7 @@ public class ProjectService extends AbstractEntityService<ProjectDTO> implements
     @Override
     public void removeByUserId(@Nullable final String userId) {
         if (userId == null) return;
-        repository.removeByUserId(userId);
+        entityRepository.findByUser_id(userId).forEach(entityRepository::remove);
     }
 
     @Override
@@ -93,7 +100,8 @@ public class ProjectService extends AbstractEntityService<ProjectDTO> implements
     @Override
     public @NotNull List<ProjectDTO> findAllByPartOfNameOrDescription(final @Nullable String partOfName) {
         if (partOfName == null) return list;
-        @NotNull final List<ProjectDTO> projects = repository.findByNameOrDescription(partOfName);
+        @NotNull String matcher = "%" + partOfName + "%";
+        @NotNull final List<ProjectDTO> projects = repository.findByNameLikeOrDescriptionLike(matcher, matcher);
         return projects;
     }
 

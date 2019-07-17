@@ -10,9 +10,8 @@ import java.util.List;
 @Repository
 public interface IProjectRepository extends FullEntityRepository<ProjectDTO, String> {
 
-    void removeAll();
     void removeByUserId(@NotNull final String userId);
     @NotNull List<ProjectDTO> findByUserId(@NotNull final String userId);
-    @NotNull List<ProjectDTO> findByNameOrDescription(@NotNull final String name);
+    @NotNull List<ProjectDTO> findByNameLikeOrDescriptionLike(@NotNull final String name, @NotNull final String description);
 
 }

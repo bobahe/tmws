@@ -10,5 +10,6 @@ public interface IPropertyService extends IService<PropertyService> {
     @Nullable String getJdbcPassword();
     @Nullable String getJdbcUrl();
     @Nullable String getJdbcDriver();
+    @Nullable String getJdbcDialect();
 
 }

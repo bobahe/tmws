@@ -10,10 +10,11 @@ import java.util.List;
 @Repository
 public interface ITaskRepository extends FullEntityRepository<TaskDTO, String> {
 
-    void removeAll();
     @NotNull List<TaskDTO> findByUserIdAndProjectId(@NotNull final String userId, @NotNull final String projectId);
     @NotNull List<TaskDTO> findByUserId(@NotNull final String userId);
     void removeByUserId(@NotNull final String userId);
-    @NotNull List<TaskDTO> findByNameOrDescription(@NotNull final String name);
+
+    @NotNull
+    List<TaskDTO> findByNameLikeOrDescriptionLike(@NotNull final String name, @NotNull final String description);
 
 }

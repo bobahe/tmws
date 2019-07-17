@@ -35,9 +35,6 @@ public class EntityManagerProducer {
     private static final String UNIT_NAME = "ENTERPRISE";
 
     @Inject
-    private IPropertyService propertyService;
-
-    @Inject
     @Named("entityManagerFactory")
     @PersistenceUnitName(UNIT_NAME)
     private EntityManagerFactory entityManagerFactory;
@@ -57,15 +54,14 @@ public class EntityManagerProducer {
     @ApplicationScoped
     @Named("entityManagerFactory")
     @PersistenceUnitName("ENTERPRISE")
-    private EntityManagerFactory getEntityManagerFactory() {
-        if (propertyService == null) return null;
+    private EntityManagerFactory getEntityManagerFactory(@NotNull final IPropertyService propertyService) {
         propertyService.init();
         @NotNull final Map<String, String> settings = new HashMap<>();
         settings.put(Environment.DRIVER, propertyService.getJdbcDriver());
         settings.put(Environment.URL, propertyService.getJdbcUrl());
         settings.put(Environment.USER, propertyService.getJdbcUsername());
         settings.put(Environment.PASS, propertyService.getJdbcPassword());
-        settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQL5InnoDBDialect");
+        settings.put(Environment.DIALECT, propertyService.getJdbcDialect());
         settings.put(Environment.HBM2DDL_AUTO, "update");
         settings.put(Environment.SHOW_SQL, "true");
         settings.put(Environment.HBM2DDL_CHARSET_NAME, "utf8");

@@ -9,7 +9,6 @@ import ru.levin.tmws.dto.UserDTO;
 @Repository
 public interface IUserRepository extends FullEntityRepository<UserDTO, String> {
 
-    void removeAll();
     @Nullable UserDTO findByLoginAndPassword(@NotNull final String login, @NotNull final String hash);
 
 }

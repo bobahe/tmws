@@ -10,7 +10,6 @@ import java.util.List;
 @Repository
 public interface ISessionRepository extends FullEntityRepository<SessionDTO, String> {
 
-    void removeAll();
     @NotNull List<SessionDTO> findByUserId(@NotNull final String userId);
     void removeByUserId(@NotNull final String userId);
 

@@ -62,7 +62,8 @@ public class TaskService extends AbstractEntityService<TaskDTO> implements ITask
     @Override
     public @NotNull List<TaskDTO> findAllByPartOfNameOrDescription(final @Nullable String partOfName) {
         if (partOfName == null) return list;
-        @NotNull final List<TaskDTO> tasks = repository.findByNameOrDescription(partOfName);
+        @NotNull String matcher = "%" + partOfName + "%";
+        @NotNull final List<TaskDTO> tasks = repository.findByNameLikeOrDescriptionLike(matcher, matcher);
         return tasks;
     }
 
@@ -94,7 +95,7 @@ public class TaskService extends AbstractEntityService<TaskDTO> implements ITask
 
     @Override
     public boolean removeAll() {
-        repository.removeAll();
+        repository.findAll().forEach(repository::remove);
         return true;
     }
 
