@@ -2,6 +2,8 @@ package ru.levin.tmws.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,6 +21,8 @@ import java.util.UUID;
 )
 @Entity
 @Table(name = "app_session")
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public final class Session extends AbstractHasOwnerEntity implements Serializable {
 
     @Column

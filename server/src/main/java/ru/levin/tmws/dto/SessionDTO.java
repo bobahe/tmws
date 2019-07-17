@@ -2,9 +2,12 @@ package ru.levin.tmws.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -14,6 +17,8 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "app_session")
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class SessionDTO extends AbstractHasOwnerDTO {
 
     public SessionDTO() {

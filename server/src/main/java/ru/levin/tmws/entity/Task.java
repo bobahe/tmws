@@ -3,6 +3,8 @@ package ru.levin.tmws.entity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.levin.tmws.api.IContainsDatesAndStatus;
@@ -24,6 +26,8 @@ import java.util.UUID;
 )
 @Entity
 @Table(name = "app_task")
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public final class Task extends AbstractHasOwnerEntity implements IContainsDatesAndStatus, Serializable {
 
     @Column
