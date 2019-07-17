@@ -65,6 +65,13 @@ public class EntityManagerProducer {
         settings.put(Environment.HBM2DDL_AUTO, "update");
         settings.put(Environment.SHOW_SQL, "true");
         settings.put(Environment.HBM2DDL_CHARSET_NAME, "utf8");
+        settings.put(Environment.USE_SECOND_LEVEL_CACHE, "true");
+        settings.put(Environment.USE_QUERY_CACHE, "true");
+        settings.put(Environment.USE_MINIMAL_PUTS, "true");
+        settings.put(Environment.CACHE_REGION_PREFIX, "tmws");
+        settings.put(Environment.CACHE_PROVIDER_CONFIG, "hazelcast.xml");
+        settings.put(Environment.CACHE_REGION_FACTORY, "com.hazelcast.hibernate.HazelcastLocalCacheRegionFactory");
+        settings.put("hibernate.cache.hazelcast.use_lite_member", "true");
         @NotNull final StandardServiceRegistryBuilder registryBuilder = new StandardServiceRegistryBuilder();
         registryBuilder.applySettings(settings);
         final StandardServiceRegistry registry = registryBuilder.build();

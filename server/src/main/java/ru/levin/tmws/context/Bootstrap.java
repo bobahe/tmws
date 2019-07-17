@@ -44,7 +44,7 @@ public class Bootstrap {
     }
 
     private void publishEndpoints() {
-        @NotNull final String url = "http://localhost:8080/tm/";
+        @NotNull final String url = "http://localhost:8081/tm/";
         Endpoint.publish(url + "SessionEndpoint", sessionEndpoint);
         Endpoint.publish(url + "AdminEndpoint", adminEndpoint);
         Endpoint.publish(url + "ProjectEndpoint", projectEndpoint);
