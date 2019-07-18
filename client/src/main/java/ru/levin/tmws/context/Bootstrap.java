@@ -14,6 +14,7 @@ import ru.levin.tmws.command.persist.*;
 import ru.levin.tmws.command.project.*;
 import ru.levin.tmws.command.system.AboutCommand;
 import ru.levin.tmws.command.system.HelpCommand;
+import ru.levin.tmws.command.system.ServerInfoCommand;
 import ru.levin.tmws.command.system.SessionCloseAllCommand;
 import ru.levin.tmws.command.task.*;
 import ru.levin.tmws.command.user.*;
@@ -65,6 +66,11 @@ public class Bootstrap implements IServiceLocator {
 
     @Nullable
     @Getter
+    @Inject
+    private ServerEndpointService serverService;
+
+    @Nullable
+    @Getter
     @Setter
     private SessionDTO currentSession;
 
@@ -91,7 +97,7 @@ public class Bootstrap implements IServiceLocator {
             SerializedLoadCommand.class, JAXBXmlSaveCommand.class, JAXBXmlLoadCommand.class,
             JAXBJsonSaveCommand.class, JAXBJsonLoadCommand.class, FasterXmlSaveCommand.class,
             FasterXmlLoadCommand.class, FasterJsonSaveCommand.class, FasterJsonLoadCommand.class,
-            SessionCloseAllCommand.class
+            SessionCloseAllCommand.class, ServerInfoCommand.class
     };
 
     public void init() {

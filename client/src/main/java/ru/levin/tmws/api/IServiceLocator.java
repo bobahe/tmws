@@ -20,6 +20,7 @@ public interface IServiceLocator {
     @NotNull SessionEndpointService getSessionService();
     @NotNull TaskEndpointService getTaskService();
     @NotNull UserEndpointService getUserService();
+    @NotNull ServerEndpointService getServerService();
     @Nullable SessionDTO getCurrentSession();
     void setCurrentSession(final SessionDTO session);
     @Nullable ProjectDTO getSelectedProject();

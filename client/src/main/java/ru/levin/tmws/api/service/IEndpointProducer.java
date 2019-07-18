@@ -15,4 +15,6 @@ public interface IEndpointProducer {
 
     @NotNull IUserEndpoint getUserEndpoint();
 
+    @NotNull IServerEndpoint getServerEndpoint();
+
 }

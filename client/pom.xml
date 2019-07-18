@@ -156,22 +156,22 @@
                             <sourceRoot>${project.basedir}/src/main/java</sourceRoot>
                             <wsdlOptions>
                                 <wsdlOption>
-                                    <wsdl>http://localhost:8080/tm/ProjectEndpoint?wsdl</wsdl>
+                                    <wsdl>http://localhost:80/tm/ProjectEndpoint?wsdl</wsdl>
                                 </wsdlOption>
                                 <wsdlOption>
-                                    <wsdl>http://localhost:8080/tm/SessionEndpoint?wsdl</wsdl>
+                                    <wsdl>http://localhost:80/tm/SessionEndpoint?wsdl</wsdl>
                                 </wsdlOption>
                                 <wsdlOption>
-                                    <wsdl>http://localhost:8080/tm/TaskEndpoint?wsdl</wsdl>
+                                    <wsdl>http://localhost:80/tm/TaskEndpoint?wsdl</wsdl>
                                 </wsdlOption>
                                 <wsdlOption>
-                                    <wsdl>http://localhost:8080/tm/UserEndpoint?wsdl</wsdl>
+                                    <wsdl>http://localhost:80/tm/UserEndpoint?wsdl</wsdl>
                                 </wsdlOption>
                                 <wsdlOption>
-                                    <wsdl>http://localhost:8080/tm/AdminEndpoint?wsdl</wsdl>
+                                    <wsdl>http://localhost:80/tm/AdminEndpoint?wsdl</wsdl>
                                 </wsdlOption>
                                 <wsdlOption>
-                                    <wsdl>http://localhost:8080/tm/ServerEndpoint?wsdl</wsdl>
+                                    <wsdl>http://localhost:80/tm/ServerEndpoint?wsdl</wsdl>
                                 </wsdlOption>
                             </wsdlOptions>
                         </configuration>

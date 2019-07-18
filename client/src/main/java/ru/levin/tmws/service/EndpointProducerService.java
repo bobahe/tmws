@@ -41,4 +41,10 @@ public class EndpointProducerService implements IEndpointProducer {
         return new UserEndpointService().getUserEndpointPort();
     }
 
+    @NotNull
+    @Produces
+    public IServerEndpoint getServerEndpoint() {
+        return new ServerEndpointService().getServerEndpointPort();
+    }
+
 }
