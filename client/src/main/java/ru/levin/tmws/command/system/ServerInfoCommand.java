@@ -43,7 +43,7 @@ public final class ServerInfoCommand extends AbstractCommand {
 
     @Override
     public boolean isRequiredAuthorization() {
-        return false;
+        return true;
     }
 
     @Override
