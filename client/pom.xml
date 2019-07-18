@@ -170,6 +170,9 @@
                                 <wsdlOption>
                                     <wsdl>http://localhost:8080/tm/AdminEndpoint?wsdl</wsdl>
                                 </wsdlOption>
+                                <wsdlOption>
+                                    <wsdl>http://localhost:8080/tm/ServerEndpoint?wsdl</wsdl>
+                                </wsdlOption>
                             </wsdlOptions>
                         </configuration>
                         <goals>

@@ -36,6 +36,10 @@ public class Bootstrap {
 
     @Nullable
     @Inject
+    private IServerEndpoint serverEndpoint;
+
+    @Nullable
+    @Inject
     private IUserService userService;
 
     public void init() {
@@ -44,12 +48,13 @@ public class Bootstrap {
     }
 
     private void publishEndpoints() {
-        @NotNull final String url = "http://localhost:8080/tm/";
+        @NotNull final String url = "http://localhost:" + System.getProperty("server.port") + "/tm/";
         Endpoint.publish(url + "SessionEndpoint", sessionEndpoint);
         Endpoint.publish(url + "AdminEndpoint", adminEndpoint);
         Endpoint.publish(url + "ProjectEndpoint", projectEndpoint);
         Endpoint.publish(url + "TaskEndpoint", taskEndpoint);
         Endpoint.publish(url + "UserEndpoint", userEndpoint);
+        Endpoint.publish(url + "ServerEndpoint", serverEndpoint);
     }
 
     private void createDefaultUsers() {
