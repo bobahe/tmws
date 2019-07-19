@@ -2,18 +2,25 @@ package ru.levin.tmws.command.system;
 
 import com.jcabi.manifests.Manifests;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.service.ITerminalService;
 import ru.levin.tmws.command.AbstractCommand;
 
+@Component
 public final class AboutCommand extends AbstractCommand {
 
     @NotNull
-    private final ITerminalService terminalService;
+    private ITerminalService terminalService;
+    @Autowired
+    public void setTerminalService(@NotNull final ITerminalService terminalService) {
+        this.terminalService = terminalService;
+    }
 
+    @Autowired
     public AboutCommand(@NotNull final IServiceLocator serviceLocator) {
         super(serviceLocator);
-        this.terminalService = serviceLocator.getTerminalService();
     }
 
     @Override

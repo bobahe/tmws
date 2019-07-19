@@ -1,27 +1,27 @@
 package ru.levin.tmws.service;
 
-import org.apache.deltaspike.jpa.api.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.levin.tmws.api.repository.ITaskRepository;
 import ru.levin.tmws.api.service.ITaskService;
 import ru.levin.tmws.dto.TaskDTO;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-@ApplicationScoped
-@Transactional
+@Service
 public class TaskService extends AbstractEntityService<TaskDTO> implements ITaskService {
 
     @NotNull
     final List<TaskDTO> list = new ArrayList<>();
 
     @NotNull
-    @Inject
     private ITaskRepository repository;
+    @Autowired
+    public void setRepository(@NotNull final ITaskRepository repository) { this.repository = repository; }
 
     @Override
     public @NotNull List<TaskDTO> getAll() {
@@ -46,6 +46,7 @@ public class TaskService extends AbstractEntityService<TaskDTO> implements ITask
     }
 
     @Override
+    @Transactional
     public void removeByUserId(@Nullable final String userId) {
         if (userId == null) return;
         repository.removeByUserId(userId);
@@ -69,33 +70,37 @@ public class TaskService extends AbstractEntityService<TaskDTO> implements ITask
 
     @Override
     @Nullable
+    @Transactional
     public TaskDTO save(@Nullable final TaskDTO entity) {
         if (entity == null) return null;
         if (entity.getName() == null || entity.getName().isEmpty()) return null;
-        repository.persist(entity);
+        repository.save(entity);
         return entity;
     }
 
     @Override
     @Nullable
+    @Transactional
     public TaskDTO update(@Nullable final TaskDTO entity) {
         if (entity == null) return null;
         if (entity.getId() == null || entity.getId().isEmpty()) return null;
         if (entity.getName() == null || entity.getName().isEmpty()) return null;
-        repository.merge(entity);
+        repository.save(entity);
         return entity;
     }
 
     @Override
+    @Transactional
     public boolean remove(final @Nullable TaskDTO entity) {
         if (entity == null) return false;
-        repository.remove(entity);
+        repository.delete(entity);
         return true;
     }
 
     @Override
+    @Transactional
     public boolean removeAll() {
-        repository.findAll().forEach(repository::remove);
+        repository.findAll().forEach(repository::delete);
         return true;
     }
 
@@ -103,7 +108,7 @@ public class TaskService extends AbstractEntityService<TaskDTO> implements ITask
     @Override
     public TaskDTO findOneById(final @Nullable String id) {
         if (id == null) return null;
-        @Nullable final TaskDTO task = repository.findBy(id);
+        @Nullable final TaskDTO task = repository.findById(id).orElse(null);
         return task;
     }
 

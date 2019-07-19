@@ -2,13 +2,13 @@ package ru.levin.tmws.service;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.stereotype.Service;
 import ru.levin.tmws.api.service.ITerminalService;
 
-import javax.enterprise.context.ApplicationScoped;
 import java.io.InputStreamReader;
 import java.util.Scanner;
 
-@ApplicationScoped
+@Service
 public class TerminalService implements ITerminalService {
 
     @NotNull

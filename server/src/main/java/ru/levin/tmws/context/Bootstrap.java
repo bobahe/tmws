@@ -2,44 +2,45 @@ package ru.levin.tmws.context;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.levin.tmws.api.endpoint.*;
 import ru.levin.tmws.api.service.IUserService;
 import ru.levin.tmws.dto.UserDTO;
 import ru.levin.tmws.entity.RoleType;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import javax.xml.ws.Endpoint;
 
-@ApplicationScoped
+@Component
 public class Bootstrap {
 
-    @Nullable
-    @Inject
+    @NotNull
     private ISessionEndpoint sessionEndpoint;
+    @Autowired
+    public void setSessionEndpoint(@NotNull final ISessionEndpoint sessionEndpoint) { this.sessionEndpoint = sessionEndpoint; }
 
     @Nullable
-    @Inject
+    @Autowired
     private IAdminEndpoint adminEndpoint;
 
     @Nullable
-    @Inject
+    @Autowired
     private IProjectEndpoint projectEndpoint;
 
     @Nullable
-    @Inject
+    @Autowired
     private ITaskEndpoint taskEndpoint;
 
     @Nullable
-    @Inject
+    @Autowired
     private IUserEndpoint userEndpoint;
 
     @Nullable
-    @Inject
+    @Autowired
     private IServerEndpoint serverEndpoint;
 
     @Nullable
-    @Inject
+    @Autowired
     private IUserService userService;
 
     public void init() {

@@ -1,6 +1,5 @@
 package ru.levin.tmws.test;
 
-import org.apache.deltaspike.testcontrol.api.junit.CdiTestRunner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.After;
@@ -8,10 +7,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.test.context.junit4.SpringRunner;
 import ru.levin.tmws.dto.TaskDTO;
 import ru.levin.tmws.dto.UserDTO;
 
-@RunWith(CdiTestRunner.class)
+@RunWith(SpringRunner.class)
 public class TaskServiceTest extends AbstractServiceTest {
 
     @Before

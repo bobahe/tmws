@@ -1,6 +1,9 @@
 package ru.levin.tmws.endpoint;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.levin.tmws.api.endpoint.IAdminEndpoint;
 import ru.levin.tmws.api.service.IPersistService;
 import ru.levin.tmws.api.service.ISessionService;
@@ -10,27 +13,29 @@ import ru.levin.tmws.exception.AccessForbiddenException;
 import ru.levin.tmws.exception.InternalServiceException;
 import ru.levin.tmws.util.ServiceUtil;
 
-import javax.inject.Inject;
 import javax.jws.WebService;
 
+@Component
 @WebService(endpointInterface = "ru.levin.tmws.api.endpoint.IAdminEndpoint")
 public class AdminEndpoint implements IAdminEndpoint {
 
-    @Nullable
-    @Inject
+    @NotNull
     private ISessionService sessionService;
+    @Autowired
+    public void setSessionService(@NotNull final ISessionService service) { this.sessionService = service; }
 
-    @Nullable
-    @Inject
+    @NotNull
     private IUserService userService;
+    @Autowired
+    public void setUserService(@NotNull final IUserService service) { this.userService = service; }
 
-    @Nullable
-    @Inject
+    @NotNull
     private IPersistService persistService;
+    @Autowired
+    public void setPersistService(@NotNull final IPersistService service) { this.persistService = service; }
 
     @Override
     public void serialize(final @Nullable SessionDTO session) {
-        if (sessionService == null || userService == null || persistService == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new InternalServiceException();
         final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), userService);
@@ -40,7 +45,6 @@ public class AdminEndpoint implements IAdminEndpoint {
 
     @Override
     public void deserialize(final @Nullable SessionDTO session) {
-        if (sessionService == null || userService == null || persistService == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new InternalServiceException();
         final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), userService);
@@ -50,7 +54,6 @@ public class AdminEndpoint implements IAdminEndpoint {
 
     @Override
     public void saveFxmlXml(final @Nullable SessionDTO session) {
-        if (sessionService == null || userService == null || persistService == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new InternalServiceException();
         final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), userService);
@@ -60,7 +63,6 @@ public class AdminEndpoint implements IAdminEndpoint {
 
     @Override
     public void saveFxmlJson(final @Nullable SessionDTO session) {
-        if (sessionService == null || userService == null || persistService == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new InternalServiceException();
         final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), userService);
@@ -70,7 +72,6 @@ public class AdminEndpoint implements IAdminEndpoint {
 
     @Override
     public void loadFxmlXml(final @Nullable SessionDTO session) {
-        if (sessionService == null || userService == null || persistService == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new InternalServiceException();
         final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), userService);
@@ -80,7 +81,6 @@ public class AdminEndpoint implements IAdminEndpoint {
 
     @Override
     public void loadFxmlJson(final @Nullable SessionDTO session) {
-        if (sessionService == null || userService == null || persistService == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new InternalServiceException();
         final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), userService);
@@ -90,7 +90,6 @@ public class AdminEndpoint implements IAdminEndpoint {
 
     @Override
     public void saveJaxbXml(final @Nullable SessionDTO session) {
-        if (sessionService == null || userService == null || persistService == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new InternalServiceException();
         final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), userService);
@@ -100,7 +99,6 @@ public class AdminEndpoint implements IAdminEndpoint {
 
     @Override
     public void saveJaxbJson(final @Nullable SessionDTO session) {
-        if (sessionService == null || userService == null || persistService == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new InternalServiceException();
         final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), userService);
@@ -110,7 +108,6 @@ public class AdminEndpoint implements IAdminEndpoint {
 
     @Override
     public void loadJaxbXml(final @Nullable SessionDTO session) {
-        if (sessionService == null || userService == null || persistService == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new InternalServiceException();
         final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), userService);
@@ -120,7 +117,6 @@ public class AdminEndpoint implements IAdminEndpoint {
 
     @Override
     public void loadJaxbJson(final @Nullable SessionDTO session) {
-        if (sessionService == null || userService == null || persistService == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new InternalServiceException();
         final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), userService);

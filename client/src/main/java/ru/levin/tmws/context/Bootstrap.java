@@ -4,6 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.stereotype.Component;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.ProjectDTO;
 import ru.levin.tmws.api.endpoint.SessionDTO;
@@ -18,56 +22,24 @@ import ru.levin.tmws.command.system.ServerInfoCommand;
 import ru.levin.tmws.command.system.SessionCloseAllCommand;
 import ru.levin.tmws.command.task.*;
 import ru.levin.tmws.command.user.*;
-import ru.levin.tmws.endpoint.*;
 import ru.levin.tmws.exception.CommandNotFoundException;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import java.lang.reflect.Constructor;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@ApplicationScoped
+@Component
 public class Bootstrap implements IServiceLocator {
 
     @NotNull
     @Getter
     private final Map<String, AbstractCommand> commands = new LinkedHashMap<>();
 
-    @Nullable
-    @Getter
-    @Inject
+    @NotNull
     private ITerminalService terminalService;
-
-    @Nullable
-    @Getter
-    @Inject
-    private AdminEndpointService adminService;
-
-    @Nullable
-    @Getter
-    @Inject
-    private ProjectEndpointService projectService;
-
-    @Nullable
-    @Getter
-    @Inject
-    private SessionEndpointService sessionService;
-
-    @Nullable
-    @Getter
-    @Inject
-    private TaskEndpointService taskService;
-
-    @Nullable
-    @Getter
-    @Inject
-    private UserEndpointService userService;
-
-    @Nullable
-    @Getter
-    @Inject
-    private ServerEndpointService serverService;
+    @Autowired
+    public void setTerminalService(@NotNull final ITerminalService terminalService) {
+        this.terminalService = terminalService;
+    }
 
     @Nullable
     @Getter
@@ -100,28 +72,21 @@ public class Bootstrap implements IServiceLocator {
             SessionCloseAllCommand.class, ServerInfoCommand.class
     };
 
-    public void init() {
-        registerCommands();
+    public void init(@NotNull final ClassPathXmlApplicationContext context) {
+        registerCommands(context);
         process();
     }
 
-    private void registerCommands() {
-        if (terminalService == null) return;
+    private void registerCommands(@NotNull final ClassPathXmlApplicationContext context) {
         for (final Class<?> cmdClass : COMMANDS) {
             if (cmdClass.getSuperclass().equals(AbstractCommand.class)) {
-                try {
-                    Constructor<?> constructor = cmdClass.getConstructor(IServiceLocator.class);
-                    AbstractCommand command = (AbstractCommand) constructor.newInstance(this);
-                    this.commands.put(command.getName(), command);
-                } catch (Exception e) {
-                    terminalService.printerr(e.getMessage());
-                }
+                @NotNull final AbstractCommand command = ((AbstractCommand) ((BeanFactory) context).getBean(cmdClass));
+                this.commands.put(command.getName(), command);
             }
         }
     }
 
     private void process() {
-        if (terminalService == null) return;
         terminalService.println("*** WELCOME TO TASK MANAGER ***");
         @NotNull String command = terminalService.getLine();
 
@@ -136,7 +101,6 @@ public class Bootstrap implements IServiceLocator {
     }
 
     private void invokeCommand(String commandName) {
-        if (terminalService == null) return;
         @Nullable final AbstractCommand command = commands.get(commandName);
         try {
             if (command == null) throw new CommandNotFoundException();

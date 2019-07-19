@@ -1,6 +1,8 @@
 package ru.levin.tmws.command.project;
 
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.IProjectEndpoint;
 import ru.levin.tmws.api.endpoint.ProjectDTO;
@@ -10,18 +12,26 @@ import ru.levin.tmws.exception.NoStatusException;
 
 import java.util.List;
 
+@Component
 public final class ProjectFindCommand extends AbstractCommand {
 
     @NotNull
-    private final ITerminalService terminalService;
+    private ITerminalService terminalService;
+    @Autowired
+    public void setTerminalService(@NotNull final ITerminalService terminalService) {
+        this.terminalService = terminalService;
+    }
 
     @NotNull
-    private final IProjectEndpoint projectEndpoint;
+    private IProjectEndpoint projectEndpoint;
+    @Autowired
+    public void setProjectEndpoint(@NotNull final IProjectEndpoint projectEndpoint) {
+        this.projectEndpoint = projectEndpoint;
+    }
 
+    @Autowired
     public ProjectFindCommand(@NotNull final IServiceLocator serviceLocator) {
         super(serviceLocator);
-        this.terminalService = serviceLocator.getTerminalService();
-        this.projectEndpoint = serviceLocator.getProjectService().getProjectEndpointPort();
     }
 
     @Override

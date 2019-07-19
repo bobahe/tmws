@@ -2,6 +2,8 @@ package ru.levin.tmws.command.system;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.IServerEndpoint;
 import ru.levin.tmws.api.endpoint.ServerInfoDTO;
@@ -9,18 +11,26 @@ import ru.levin.tmws.api.service.ITerminalService;
 import ru.levin.tmws.command.AbstractCommand;
 import ru.levin.tmws.exception.NoSuchItemException;
 
+@Component
 public final class ServerInfoCommand extends AbstractCommand {
 
     @NotNull
-    private final ITerminalService terminalService;
+    private ITerminalService terminalService;
+    @Autowired
+    public void setTerminalService(@NotNull final ITerminalService terminalService) {
+        this.terminalService = terminalService;
+    }
 
     @NotNull
-    private final IServerEndpoint serverEndpoint;
+    private IServerEndpoint serverEndpoint;
+    @Autowired
+    public void setServerEndpoint(@NotNull final IServerEndpoint serverEndpoint) {
+        this.serverEndpoint = serverEndpoint;
+    }
 
+    @Autowired
     public ServerInfoCommand(@NotNull final IServiceLocator serviceLocator) {
         super(serviceLocator);
-        this.terminalService = serviceLocator.getTerminalService();
-        serverEndpoint = serviceLocator.getServerService().getServerEndpointPort();
     }
 
     @Override

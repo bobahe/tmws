@@ -2,6 +2,8 @@ package ru.levin.tmws.command.project;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.IProjectEndpoint;
 import ru.levin.tmws.api.endpoint.ProjectDTO;
@@ -14,6 +16,7 @@ import ru.levin.tmws.util.CommandUtil;
 import javax.xml.datatype.DatatypeFactory;
 import java.util.Date;
 
+@Component
 public final class ProjectChangeSelectedCommand extends AbstractCommand {
 
     @NotNull
@@ -32,15 +35,22 @@ public final class ProjectChangeSelectedCommand extends AbstractCommand {
     protected static final String STATUS_PROMPT = "ENTER STATUS:";
 
     @NotNull
-    private final ITerminalService terminalService;
+    private ITerminalService terminalService;
+    @Autowired
+    public void setTerminalService(@NotNull final ITerminalService terminalService) {
+        this.terminalService = terminalService;
+    }
 
     @NotNull
-    private final IProjectEndpoint projectEndpoint;
+    private IProjectEndpoint projectEndpoint;
+    @Autowired
+    public void setProjectEndpoint(@NotNull final IProjectEndpoint projectEndpoint) {
+        this.projectEndpoint = projectEndpoint;
+    }
 
+    @Autowired
     public ProjectChangeSelectedCommand(@NotNull final IServiceLocator serviceLocator) {
         super(serviceLocator);
-        this.terminalService = serviceLocator.getTerminalService();
-        this.projectEndpoint = serviceLocator.getProjectService().getProjectEndpointPort();
     }
 
     @Override

@@ -6,6 +6,8 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.eclipse.persistence.jaxb.JAXBContextProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ru.levin.tmws.api.service.IPersistService;
 import ru.levin.tmws.api.service.IProjectService;
 import ru.levin.tmws.api.service.ITaskService;
@@ -13,8 +15,6 @@ import ru.levin.tmws.dto.Domain;
 import ru.levin.tmws.exception.DeserializeException;
 import ru.levin.tmws.exception.SerializeException;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Marshaller;
@@ -25,14 +25,14 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
-@ApplicationScoped
+@Service
 public class PersistService implements IPersistService {
 
-    @Inject
+    @Autowired
     @Nullable
     private transient IProjectService projectService;
 
-    @Inject
+    @Autowired
     @Nullable
     private transient ITaskService taskService;
 

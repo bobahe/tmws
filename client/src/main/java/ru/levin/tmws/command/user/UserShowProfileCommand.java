@@ -2,24 +2,34 @@ package ru.levin.tmws.command.user;
 
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.ISessionEndpoint;
 import ru.levin.tmws.api.endpoint.UserDTO;
 import ru.levin.tmws.api.service.ITerminalService;
 import ru.levin.tmws.command.AbstractCommand;
 
+@Component
 public final class UserShowProfileCommand extends AbstractCommand {
 
     @NotNull
-    private final ITerminalService terminalService;
+    private ITerminalService terminalService;
+    @Autowired
+    public void setTerminalService(@NotNull final ITerminalService terminalService) {
+        this.terminalService = terminalService;
+    }
 
     @NonNull
-    private final ISessionEndpoint sessionEndpoint;
+    private ISessionEndpoint sessionEndpoint;
+    @Autowired
+    public void setSessionEndpoint(@NotNull final ISessionEndpoint sessionEndpoint) {
+        this.sessionEndpoint = sessionEndpoint;
+    }
 
+    @Autowired
     public UserShowProfileCommand(@NotNull final IServiceLocator serviceLocator) {
         super(serviceLocator);
-        this.terminalService = serviceLocator.getTerminalService();
-        this.sessionEndpoint = serviceLocator.getSessionService().getSessionEndpointPort();
     }
 
     @Override

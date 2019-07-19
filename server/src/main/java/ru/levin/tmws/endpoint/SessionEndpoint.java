@@ -2,6 +2,8 @@ package ru.levin.tmws.endpoint;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.levin.tmws.api.endpoint.ISessionEndpoint;
 import ru.levin.tmws.api.service.ISessionService;
 import ru.levin.tmws.api.service.IUserService;
@@ -12,24 +14,25 @@ import ru.levin.tmws.exception.AuthorizationException;
 import ru.levin.tmws.exception.InternalServiceException;
 import ru.levin.tmws.util.ServiceUtil;
 
-import javax.inject.Inject;
 import javax.jws.WebService;
 import java.util.List;
 
+@Component
 @WebService(endpointInterface = "ru.levin.tmws.api.endpoint.ISessionEndpoint")
 public class SessionEndpoint implements ISessionEndpoint {
 
-    @Nullable
-    @Inject
+    @NotNull
     private IUserService userService;
+    @Autowired
+    public void setUserService(@NotNull final IUserService userService) { this.userService = userService; }
 
-    @Nullable
-    @Inject
+    @NotNull
     private ISessionService sessionService;
+    @Autowired
+    public void setSessionService(@NotNull final ISessionService sessionService) { this.sessionService = sessionService; }
 
     @Override
     public @Nullable SessionDTO openSession(final @Nullable String login, final @Nullable String password) {
-        if (userService == null || sessionService == null) throw new InternalServiceException();
         if (login == null || login.isEmpty()) throw new AuthorizationException();
         if (password == null || password.isEmpty()) throw new AuthorizationException();
 
@@ -45,7 +48,6 @@ public class SessionEndpoint implements ISessionEndpoint {
 
     @Override
     public @Nullable UserDTO getUser(final @Nullable SessionDTO session) {
-        if (userService == null || sessionService == null) throw new InternalServiceException();
         @NotNull final SessionDTO serverSession = ServiceUtil.checkSession(session, sessionService);
         if (serverSession.getUserId() == null) throw new InternalServiceException();
         @Nullable final UserDTO user = userService.findById(serverSession.getUserId());
@@ -54,7 +56,6 @@ public class SessionEndpoint implements ISessionEndpoint {
 
     @Override
     public @NotNull List<SessionDTO> getSessionList(final @Nullable SessionDTO session) {
-        if (userService == null || sessionService == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new InternalServiceException();
         final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), userService);
@@ -64,14 +65,12 @@ public class SessionEndpoint implements ISessionEndpoint {
 
     @Override
     public void closeSession(final @Nullable SessionDTO session) {
-        if (userService == null || sessionService == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, sessionService);
         sessionService.remove(session);
     }
 
     @Override
     public void closeSessionAll(final @Nullable SessionDTO session) {
-        if (userService == null || sessionService == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new InternalServiceException();
         final boolean isAdmin = ServiceUtil.isAdmin(session.getUserId(), userService);

@@ -2,6 +2,8 @@ package ru.levin.tmws.command.user;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.ISessionEndpoint;
 import ru.levin.tmws.api.endpoint.SessionDTO;
@@ -9,6 +11,7 @@ import ru.levin.tmws.api.service.ITerminalService;
 import ru.levin.tmws.command.AbstractCommand;
 import ru.levin.tmws.exception.SessionNotNullException;
 
+@Component
 public final class UserLoginCommand extends AbstractCommand {
 
     @NotNull
@@ -18,15 +21,22 @@ public final class UserLoginCommand extends AbstractCommand {
     protected static final String PASSWORD_PROMPT = "ENTER PASSWORD:";
 
     @NotNull
-    private final ITerminalService terminalService;
+    private ITerminalService terminalService;
+    @Autowired
+    public void setTerminalService(@NotNull final ITerminalService terminalService) {
+        this.terminalService = terminalService;
+    }
 
     @NotNull
-    private final ISessionEndpoint sessionEndpoint;
+    private ISessionEndpoint sessionEndpoint;
+    @Autowired
+    public void setSessionEndpoint(@NotNull final ISessionEndpoint sessionEndpoint) {
+        this.sessionEndpoint = sessionEndpoint;
+    }
 
+    @Autowired
     public UserLoginCommand(@NotNull final IServiceLocator serviceLocator) {
         super(serviceLocator);
-        this.terminalService = serviceLocator.getTerminalService();
-        this.sessionEndpoint = serviceLocator.getSessionService().getSessionEndpointPort();
     }
 
     @Override

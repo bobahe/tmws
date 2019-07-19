@@ -2,25 +2,27 @@ package ru.levin.tmws.command.task;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.ITaskEndpoint;
 import ru.levin.tmws.api.endpoint.TaskDTO;
-import ru.levin.tmws.api.service.ITerminalService;
 import ru.levin.tmws.command.AbstractCommand;
 import ru.levin.tmws.exception.NoSelectedTaskException;
 
+@Component
 public final class TaskRemoveSelectedCommand extends AbstractCommand {
 
     @NotNull
-    private final ITerminalService terminalService;
+    private ITaskEndpoint taskEndpoint;
+    @Autowired
+    public void setTaskEndpoint(@NotNull final ITaskEndpoint taskEndpoint) {
+        this.taskEndpoint = taskEndpoint;
+    }
 
-    @NotNull
-    private final ITaskEndpoint taskEndpoint;
-
+    @Autowired
     public TaskRemoveSelectedCommand(@NotNull final IServiceLocator serviceLocator) {
         super(serviceLocator);
-        this.terminalService = serviceLocator.getTerminalService();
-        this.taskEndpoint = serviceLocator.getTaskService().getTaskEndpointPort();
     }
 
     @Override

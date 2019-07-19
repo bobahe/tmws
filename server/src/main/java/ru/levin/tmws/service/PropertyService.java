@@ -3,13 +3,13 @@ package ru.levin.tmws.service;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.stereotype.Service;
 import ru.levin.tmws.api.service.IPropertyService;
 
-import javax.enterprise.context.ApplicationScoped;
 import java.io.InputStream;
 import java.util.Properties;
 
-@ApplicationScoped
+@Service
 public class PropertyService implements IPropertyService {
 
     @NotNull

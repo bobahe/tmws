@@ -1,12 +1,15 @@
 package ru.levin.tmws.command.user;
 
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.IUserEndpoint;
 import ru.levin.tmws.api.service.ITerminalService;
 import ru.levin.tmws.command.AbstractCommand;
 import ru.levin.tmws.exception.PasswordsNotEqualException;
 
+@Component
 public final class UserChangePasswordCommand extends AbstractCommand {
 
     @NotNull
@@ -16,15 +19,22 @@ public final class UserChangePasswordCommand extends AbstractCommand {
     protected static final String PASSWORD_AGAIN_PROMPT = "ENTER PASSWORD AGAIN:";
 
     @NotNull
-    private final ITerminalService terminalService;
+    private ITerminalService terminalService;
+    @Autowired
+    public void setTerminalService(@NotNull final ITerminalService terminalService) {
+        this.terminalService = terminalService;
+    }
 
     @NotNull
-    private final IUserEndpoint userEndpoint;
+    private IUserEndpoint userEndpoint;
+    @Autowired
+    public void setUserEndpoint(@NotNull final IUserEndpoint userEndpoint) {
+        this.userEndpoint = userEndpoint;
+    }
 
+    @Autowired
     public UserChangePasswordCommand(@NotNull final IServiceLocator serviceLocator) {
         super(serviceLocator);
-        this.terminalService = serviceLocator.getTerminalService();
-        this.userEndpoint = serviceLocator.getUserService().getUserEndpointPort();
     }
 
     @Override

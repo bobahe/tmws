@@ -1,70 +1,77 @@
 package ru.levin.tmws.service;
 
-import org.apache.deltaspike.jpa.api.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.levin.tmws.api.repository.IProjectEntityRepository;
 import ru.levin.tmws.api.repository.IProjectRepository;
 import ru.levin.tmws.api.service.IProjectService;
 import ru.levin.tmws.dto.ProjectDTO;
 import ru.levin.tmws.entity.Project;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-@ApplicationScoped
-@Transactional
+@Service
 public class ProjectService extends AbstractEntityService<ProjectDTO> implements IProjectService {
 
     @NotNull final List<ProjectDTO> list = new ArrayList<>();
 
     @NotNull
-    @Inject
     private IProjectRepository repository;
+    @Autowired
+    public void setRepository(@NotNull final IProjectRepository repository) { this.repository = repository; }
 
     @NotNull
-    @Inject
     private IProjectEntityRepository entityRepository;
+    @Autowired
+    public void setEntityRepository(@NotNull final IProjectEntityRepository entityRepository) { this.entityRepository = entityRepository; }
 
     @Override
     public @NotNull List<ProjectDTO> getAll() {
+        final Iterable<ProjectDTO> all = repository.findAll();
         @NotNull final List<ProjectDTO> result = repository.findAll();
         return result;
     }
 
     @Nullable
     @Override
+    @Transactional
     public ProjectDTO save(final @Nullable ProjectDTO entity) {
         if (entity == null) return null;
         if (entity.getName() == null || entity.getName().isEmpty()) return null;
-        repository.persist(entity);
+        repository.save(entity);
         return entity;
     }
 
     @Nullable
     @Override
+    @Transactional
     public ProjectDTO update(final @Nullable ProjectDTO entity) {
         if (entity == null) return null;
         if (entity.getId() == null || entity.getId().isEmpty()) return null;
         if (entity.getName() == null || entity.getName().isEmpty()) return null;
-        repository.merge(entity);
+        repository.save(entity);
         return entity;
     }
 
     @Override
+    @Transactional
     public boolean remove(final @Nullable ProjectDTO entity) {
         if (entity == null) return false;
         if (entity.getId() == null || entity.getId().isEmpty()) return false;
-        @NotNull final Project savedEntity = entityRepository.findBy(entity.getId());
-        entityRepository.remove(savedEntity);
+        @Nullable final Project savedEntity = entityRepository.findById(entity.getId()).orElse(null);
+        if (savedEntity == null) return false;
+        entityRepository.delete(savedEntity);
         return true;
     }
 
     @Override
+    @Transactional
     public boolean removeAll() {
-        entityRepository.findAll().forEach(entityRepository::remove);
+        entityRepository.findAll().forEach(entityRepository::delete);
         return true;
     }
 
@@ -72,14 +79,15 @@ public class ProjectService extends AbstractEntityService<ProjectDTO> implements
     @Override
     public ProjectDTO findOneById(final @Nullable String id) {
         if (id == null) return null;
-        @Nullable final ProjectDTO project = repository.findBy(id);
+        @Nullable final ProjectDTO project = repository.findById(id).orElse(null);
         return project;
     }
 
     @Override
+    @Transactional
     public void removeByUserId(@Nullable final String userId) {
         if (userId == null) return;
-        entityRepository.findByUser_id(userId).forEach(entityRepository::remove);
+        entityRepository.findByUser_id(userId).forEach(entityRepository::delete);
     }
 
     @Override

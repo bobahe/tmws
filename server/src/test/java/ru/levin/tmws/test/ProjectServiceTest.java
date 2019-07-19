@@ -1,6 +1,5 @@
 package ru.levin.tmws.test;
 
-import org.apache.deltaspike.testcontrol.api.junit.CdiTestRunner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.After;
@@ -8,10 +7,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.test.context.junit4.SpringRunner;
 import ru.levin.tmws.dto.ProjectDTO;
 import ru.levin.tmws.dto.UserDTO;
 
-@RunWith(CdiTestRunner.class)
+@RunWith(SpringRunner.class)
 public class ProjectServiceTest extends AbstractServiceTest {
 
     @Before
@@ -80,6 +80,8 @@ public class ProjectServiceTest extends AbstractServiceTest {
         Assert.assertNotNull(user);
         projectService.removeByUserId(user.getId());
         Assert.assertEquals(1, projectService.getAll().size());
+        taskService.getAll().forEach(task -> System.out.println(task.getName()));
+        userService.getAll().forEach(dto -> System.out.println(dto.getLogin()));
         Assert.assertEquals(3, taskService.getAll().size());
     }
 

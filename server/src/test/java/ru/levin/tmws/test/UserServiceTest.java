@@ -1,6 +1,5 @@
 package ru.levin.tmws.test;
 
-import org.apache.deltaspike.testcontrol.api.junit.CdiTestRunner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.After;
@@ -8,11 +7,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.test.context.junit4.SpringRunner;
 import ru.levin.tmws.dto.UserDTO;
 
-import javax.persistence.PersistenceException;
-
-@RunWith(CdiTestRunner.class)
+@RunWith(SpringRunner.class)
 public class UserServiceTest extends AbstractServiceTest {
 
     @Before
@@ -60,11 +58,11 @@ public class UserServiceTest extends AbstractServiceTest {
         Assert.assertEquals("usr", userService.findById(user.getId()).getFirstName());
     }
 
-    @Test(expected = PersistenceException.class)
+    @Test
     public void testRemoveUser() {
         @Nullable final UserDTO user = userService.getUserByLoginAndPassword("admin", "admin");
         Assert.assertNotNull(user);
-        userService.remove(user);
+        Assert.assertEquals(true, userService.remove(user));
     }
 
 }

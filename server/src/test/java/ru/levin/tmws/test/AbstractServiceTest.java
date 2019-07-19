@@ -1,6 +1,10 @@
 package ru.levin.tmws.test;
 
 import org.jetbrains.annotations.NotNull;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import ru.levin.tmws.api.service.IProjectService;
 import ru.levin.tmws.api.service.ISessionService;
 import ru.levin.tmws.api.service.ITaskService;
@@ -10,24 +14,24 @@ import ru.levin.tmws.dto.SessionDTO;
 import ru.levin.tmws.dto.TaskDTO;
 import ru.levin.tmws.dto.UserDTO;
 
-import javax.inject.Inject;
-
+@ContextConfiguration("/beans.xml")
+@RunWith(SpringRunner.class)
 public abstract class AbstractServiceTest {
 
     @NotNull
-    @Inject
+    @Autowired
     protected ISessionService sessionService;
 
     @NotNull
-    @Inject
+    @Autowired
     protected IProjectService projectService;
 
     @NotNull
-    @Inject
+    @Autowired
     protected ITaskService taskService;
 
     @NotNull
-    @Inject
+    @Autowired
     protected IUserService userService;
 
     protected void fillDb() {

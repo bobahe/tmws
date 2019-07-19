@@ -2,6 +2,8 @@ package ru.levin.tmws.endpoint;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.levin.tmws.api.endpoint.ITaskEndpoint;
 import ru.levin.tmws.api.service.IProjectService;
 import ru.levin.tmws.api.service.ISessionService;
@@ -12,28 +14,30 @@ import ru.levin.tmws.dto.TaskDTO;
 import ru.levin.tmws.exception.*;
 import ru.levin.tmws.util.ServiceUtil;
 
-import javax.inject.Inject;
 import javax.jws.WebService;
 import java.util.List;
 
+@Component
 @WebService(endpointInterface = "ru.levin.tmws.api.endpoint.ITaskEndpoint")
 public class TaskEndpoint implements ITaskEndpoint {
 
-    @Nullable
-    @Inject
+    @NotNull
     private ISessionService sessionService;
+    @Autowired
+    public void setSessionService(@NotNull final ISessionService sessionService) { this.sessionService = sessionService; }
 
-    @Nullable
-    @Inject
+    @NotNull
     private ITaskService taskService;
+    @Autowired
+    public void setTaskService(@NotNull final ITaskService taskService) { this.taskService = taskService; }
 
-    @Nullable
-    @Inject
+    @NotNull
     private IProjectService projectService;
+    @Autowired
+    public void setProjectService(@NotNull final IProjectService projectService) { this.projectService = projectService; }
 
     @Override
     public @Nullable TaskDTO createTask(final @Nullable SessionDTO session, final @Nullable TaskDTO task) {
-        if (sessionService == null || taskService == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new SessionValidationException();
         if (task == null) throw new SaveException();
@@ -45,7 +49,6 @@ public class TaskEndpoint implements ITaskEndpoint {
     @Override
     public void addTaskToProject(final @Nullable SessionDTO session, final @Nullable String taskId,
                                  final @Nullable String projectId) {
-        if (sessionService == null || taskService == null || projectService == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new SessionValidationException();
         if (taskId == null || projectId == null) throw new SaveException();
@@ -63,7 +66,6 @@ public class TaskEndpoint implements ITaskEndpoint {
 
     @Override
     public void updateTask(final @Nullable SessionDTO session, final @Nullable TaskDTO task) {
-        if (sessionService == null || taskService == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new SessionValidationException();
         if (task == null) throw new UpdateException();
@@ -74,7 +76,6 @@ public class TaskEndpoint implements ITaskEndpoint {
 
     @Override
     public void removeTask(final @Nullable SessionDTO session, final @Nullable TaskDTO task) {
-        if (sessionService == null || taskService == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new SessionValidationException();
         if (task == null) throw new UpdateException();
@@ -83,7 +84,6 @@ public class TaskEndpoint implements ITaskEndpoint {
 
     @Override
     public void removeTaskAll(final @Nullable SessionDTO session) {
-        if (sessionService == null || taskService == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new SessionValidationException();
         taskService.removeByUserId(session.getUserId());
@@ -91,7 +91,6 @@ public class TaskEndpoint implements ITaskEndpoint {
 
     @Override
     public @NotNull List<TaskDTO> getTaskAll(final @Nullable SessionDTO session) {
-        if (sessionService == null || taskService == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new InternalServiceException();
         @NotNull final List<TaskDTO> allByUserId = taskService.findAllByUserId(session.getUserId());
@@ -100,7 +99,6 @@ public class TaskEndpoint implements ITaskEndpoint {
 
     @Override
     public @Nullable TaskDTO getTaskById(final @Nullable SessionDTO session, final int taskId) {
-        if (sessionService == null || taskService == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new SessionValidationException();
         return taskService.findOneByIndex(session.getUserId(), taskId);
@@ -108,7 +106,6 @@ public class TaskEndpoint implements ITaskEndpoint {
 
     @Override
     public @NotNull List<TaskDTO> getTaskByNameOrDescription(final @Nullable SessionDTO session, final @Nullable String matcher) {
-        if (sessionService == null || taskService == null) throw new InternalServiceException();
         ServiceUtil.checkSession(session, sessionService);
         if (session.getUserId() == null) throw new SessionValidationException();
         if (matcher == null) throw new InternalServiceException();

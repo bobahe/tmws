@@ -2,6 +2,8 @@ package ru.levin.tmws.command.task;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.levin.tmws.api.IServiceLocator;
 import ru.levin.tmws.api.endpoint.ITaskEndpoint;
 import ru.levin.tmws.api.endpoint.ProjectDTO;
@@ -13,6 +15,7 @@ import ru.levin.tmws.util.CommandUtil;
 import javax.xml.datatype.DatatypeFactory;
 import java.util.Date;
 
+@Component
 public final class TaskCreateCommand extends AbstractCommand {
 
     @NotNull
@@ -31,14 +34,22 @@ public final class TaskCreateCommand extends AbstractCommand {
     private static final String JOIN_TO_PROJECT_PROMPT = "Would you like to attach this task to selected project? (Y/n)";
 
     @NotNull
-    private final ITerminalService terminalService;
+    private ITerminalService terminalService;
+    @Autowired
+    public void setTerminalService(@NotNull final ITerminalService terminalService) {
+        this.terminalService = terminalService;
+    }
 
-    @NotNull final ITaskEndpoint taskEndpoint;
+    @NotNull
+    private ITaskEndpoint taskEndpoint;
+    @Autowired
+    public void setTaskEndpoint(@NotNull final ITaskEndpoint taskEndpoint) {
+        this.taskEndpoint = taskEndpoint;
+    }
 
+    @Autowired
     public TaskCreateCommand(@NotNull final IServiceLocator serviceLocator) {
         super(serviceLocator);
-        this.terminalService = serviceLocator.getTerminalService();
-        this.taskEndpoint = serviceLocator.getTaskService().getTaskEndpointPort();
     }
 
     @Override

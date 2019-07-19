@@ -1,15 +1,14 @@
 package ru.levin.tmws;
 
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.levin.tmws.context.Bootstrap;
-
-import javax.enterprise.inject.se.SeContainerInitializer;
 
 public class ServerApp {
 
     public static void main(String[] args) {
-        SeContainerInitializer.newInstance()
-                .addPackages(ServerApp.class).initialize()
-                .select(Bootstrap.class).get().init();
+        ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("beans.xml");
+        ((BeanFactory) appContext).getBean(Bootstrap.class).init();
     }
 
 }
